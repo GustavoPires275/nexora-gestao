@@ -2,6 +2,8 @@
 
 Sistema de gestão completo para pequenos negócios, em produção e usado por lojas e restaurantes. Uma única instalação atende várias empresas, cada uma com seus dados isolados, e um painel master controla toda a plataforma.
 
+<p align="center"><img src="docs/login.jpg" alt="Tela de login do NEXORA" width="80%"></p>
+
 > Este repositório traz o código-fonte sem nenhum banco de dados ou dado de cliente. O banco é criado do zero na primeira execução.
 
 ## O problema
