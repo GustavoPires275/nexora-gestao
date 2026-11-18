@@ -732,6 +732,45 @@ def init_db():
         """
     )
 
+    # Multiempresa: bancos novos precisam da tabela companies e da coluna
+    # company_id nas tabelas da loja. Em bancos existentes nada muda.
+    c.execute(
+        """
+        CREATE TABLE IF NOT EXISTS companies(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            document TEXT,
+            phone TEXT,
+            address TEXT,
+            active INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT NOT NULL,
+            segment TEXT NOT NULL DEFAULT 'LOJA' CHECK(segment IN ('LOJA','RESTAURANTE'))
+        )
+        """
+    )
+    for tenant_table in (
+        "users", "categories", "products", "customers", "suppliers",
+        "cash_sessions", "sales", "purchases", "stock_movements",
+        "expenses", "audit_log",
+    ):
+        tenant_cols = {r["name"] for r in c.execute(f"PRAGMA table_info({tenant_table})")}
+        if "company_id" not in tenant_cols:
+            c.execute(f"ALTER TABLE {tenant_table} ADD COLUMN company_id INTEGER")
+    settings_cols = {r["name"] for r in c.execute("PRAGMA table_info(settings)")}
+    if "company_id" not in settings_cols and not c.execute("SELECT 1 FROM settings LIMIT 1").fetchone():
+        c.executescript(
+            """
+            DROP TABLE settings;
+            CREATE TABLE settings(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                key TEXT NOT NULL,
+                value TEXT,
+                company_id INTEGER NOT NULL,
+                UNIQUE(company_id, key)
+            );
+            """
+        )
+
     # Migrações aditivas para o produto restaurante. Mantêm os dados atuais.
     product_cols = {r["name"] for r in c.execute("PRAGMA table_info(products)")}
     if "description" not in product_cols:
@@ -1081,6 +1120,11 @@ def init_db():
 
         salt, hp = hash_password(initial_password)
 
+        company_id = c.execute(
+            "INSERT INTO companies(name, active, created_at) VALUES(?,?,?)",
+            ("Minha Empresa", 1, now()),
+        ).lastrowid
+
         c.execute(
             """
             INSERT INTO users(
@@ -1103,6 +1147,7 @@ def init_db():
                 "admin",
                 1,
                 now(),
+                company_id,
             ),
         )
 

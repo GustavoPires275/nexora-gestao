@@ -320,6 +320,17 @@ def ensure_tables():
         ON master_integrations(company_id);
     """)
 
+    # master_plans pode ter sido criada antes por outro módulo com menos colunas.
+    plan_cols = {r[1] for r in c.execute("PRAGMA table_info(master_plans)").fetchall()}
+    for col, ddl in (
+        ("description", "TEXT DEFAULT ''"),
+        ("max_customers", "INTEGER DEFAULT 5000"),
+        ("max_sales_month", "INTEGER DEFAULT 10000"),
+        ("max_storage_mb", "INTEGER DEFAULT 1024"),
+    ):
+        if col not in plan_cols:
+            c.execute(f"ALTER TABLE master_plans ADD COLUMN {col} {ddl}")
+
     defaults = [
         ("standard", 0, 10, 1000, 5000, 10000, 1024),
         ("pro", 149, 25, 5000, 20000, 50000, 5120),

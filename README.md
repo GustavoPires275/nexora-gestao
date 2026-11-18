@@ -1,5 +1,7 @@
 # 🧾 NEXORA Gestão: Sistema de Gestão Multiempresa (PDV, Estoque, Caixa e Restaurante)
 
+[![Testes](https://github.com/GustavoPires275/nexora-gestao/actions/workflows/testes.yml/badge.svg)](https://github.com/GustavoPires275/nexora-gestao/actions/workflows/testes.yml)
+
 Sistema de gestão completo para pequenos negócios, em produção e usado por lojas e restaurantes. Uma única instalação atende várias empresas, cada uma com seus dados isolados, e um painel master controla toda a plataforma.
 
 <p align="center"><img src="docs/painel.jpg" alt="Painel master do NEXORA" width="100%"></p>
@@ -52,7 +54,16 @@ export LOJA_INITIAL_ADMIN_PASSWORD="uma-senha-forte-aqui"   # mínimo de 12 cara
 uvicorn app:app --reload
 ```
 
-Depois, acesse `http://127.0.0.1:8000`.
+Depois, acesse `http://127.0.0.1:8000` e entre com o usuário `admin` e a senha que você definiu. Na primeira execução, o sistema cria a empresa e o administrador.
+
+## Testes
+
+```bash
+pip install pytest httpx
+pytest -q tests
+```
+
+Os testes sobem o sistema com um banco novo e cobrem login, sessão, permissões, cadastro de produto, abertura de caixa e venda com baixa de estoque. Eles rodam no GitHub Actions a cada push.
 
 ---
 
