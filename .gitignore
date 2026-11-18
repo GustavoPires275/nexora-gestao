@@ -1,0 +1,16 @@
+# Banco de dados e backups (nunca versionar dados de clientes)
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+BACKUPS/
+
+# Segredos
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/

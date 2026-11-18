@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173c2b">
+  <title>Cardápio</title>
+  <link rel="stylesheet" href="/static/menu.css">
+  <script src="/static/menu.js" defer></script>
+</head>
+<body>
+  <header class="header"><div class="brand">CARDÁPIO</div><h1 id="restaurant">Carregando cardápio…</h1><p id="table-label"></p></header>
+  <main>
+    <nav id="categories" class="categories" aria-label="Categorias"></nav>
+    <div id="notice" class="notice" role="status" hidden></div>
+    <section id="menu" class="menu" aria-live="polite"></section>
+  </main>
+  <footer class="footer">
+    <button id="waiter" class="secondary" type="button">Chamar garçom</button>
+    <button id="bill" class="secondary" type="button">Pedir a conta</button>
+    <button id="review" class="primary" type="button">Revisar pedido <span id="cart-count">0</span></button>
+  </footer>
+  <dialog id="cart-dialog"><form method="dialog" class="dialog-head"><h2>Seu pedido</h2><button class="close" aria-label="Fechar">×</button></form><div id="cart-lines"></div><div class="total"><span>Subtotal</span><strong id="cart-total">R$ 0,00</strong></div><p class="hint">O preço e o total serão confirmados pelo restaurante.</p><button id="submit-order" class="primary full" type="button">Enviar para a cozinha</button></dialog>
+</body>
+</html>

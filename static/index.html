@@ -1,0 +1,2028 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NEXORA | Enterprise Management Platform</title>
+<link rel="icon" type="image/svg+xml" href="/static/nexora-mark.svg">
+<style>
+:root{
+  --ink:#161a23;--ink-soft:#232a38;
+  --paper:#F3F4EE;--surface:#fff;
+  --line:#E1E2D6;--line-soft:#EBEBE1;
+  --text:#1C1F27;--muted:#6B7062;
+  --till:#1E7A4C;--till-deep:#155C39;--till-soft:#E4F3EA;
+  --brass:#9C6B2E;--brass-soft:#F3EADA;
+  --amber:#B07C1F;--amber-soft:#FBF0DA;
+  --brick:#AE3B27;--brick-soft:#F8E6E1;
+  --font-display:'Space Grotesk','Avenir Next','Century Gothic','Segoe UI Semibold','Helvetica Neue',Arial,sans-serif;
+  --font-body:'Public Sans','Inter','Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --font-mono:'IBM Plex Mono','SFMono-Regular',Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--font-body);background:var(--paper);color:var(--text);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit} button{cursor:pointer}.hidden{display:none!important}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+#login{min-height:100vh;display:grid;place-items:center;padding:20px;
+  background:
+    radial-gradient(circle at 18% 15%,#232a3c 0%,var(--ink) 55%),
+    repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 30px),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 30px);
+}
+.login-card{width:min(420px,92vw);background:var(--surface);padding:34px 32px;border-radius:12px;box-shadow:0 26px 70px rgba(0,0,0,.38);position:relative}
+.login-card::before{content:'';position:absolute;top:0;left:30px;right:30px;height:3px;background:var(--brass);border-radius:0 0 3px 3px}
+.login-mark{width:38px;height:38px;border-radius:7px;background:var(--till);color:#fff;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:13px;margin-bottom:16px;letter-spacing:-.02em}
+.login-card h1{margin:0 0 6px;font-family:var(--font-display);font-weight:800;font-size:25px;letter-spacing:-.02em;color:var(--text)}
+.login-card p{color:var(--muted);font-size:14px;max-width:32ch;line-height:1.5}
+.input{width:100%;border:1px solid var(--line);border-radius:7px;padding:10px 12px;background:#fff;font-size:14px}
+.input:focus-visible{border-color:var(--brass)}
+.field{display:grid;gap:6px;margin:12px 0}.label{font-size:12.5px;color:var(--muted);font-weight:650}
+
+.btn{border:0;border-radius:7px;padding:10px 15px;background:var(--till);color:#fff;font-weight:700;font-size:14px;letter-spacing:.01em;box-shadow:inset 0 1px 0 rgba(255,255,255,.16);transition:filter .12s,transform .05s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:translateY(1px)}.btn:disabled{opacity:.45;cursor:not-allowed;filter:none;box-shadow:none}
+.btn.secondary{background:#ECEDE1;color:#2A2E22;box-shadow:none}
+.btn.danger{background:var(--brick)}.btn.good{background:var(--till)}
+.btn.small{padding:7px 11px;font-size:12.5px;border-radius:6px}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);box-shadow:none}
+
+#app{min-height:100vh;display:grid;grid-template-columns:240px 1fr}
+.sidebar{background:var(--ink);color:#dfe3ea;min-height:100vh;padding:20px 12px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{padding:8px 10px 18px;font-family:var(--font-display);font-weight:800;font-size:19px;letter-spacing:-.01em;color:#fff}
+.brand::after{content:'';display:block;width:26px;height:3px;background:var(--brass);margin-top:9px;border-radius:2px}
+.nav{display:flex;flex-direction:column}
+.nav button{position:relative;width:100%;text-align:left;border:0;background:transparent;color:#b9c0cc;padding:10px 12px 10px 17px;border-radius:6px;margin:2px 0;font-size:14px;transition:background .12s,color .12s}
+.nav button::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:2px;background:transparent;transition:background .12s}
+.nav button:hover,.nav button.active{background:var(--ink-soft);color:#fff}
+.nav button:hover::before,.nav button.active::before{background:var(--brass)}
+.side-foot{margin-top:22px;padding:14px 10px 4px;border-top:1px solid #ffffff1c;font-size:13px;color:#8b93a3}
+.side-foot strong{display:block;color:#fff;margin-bottom:3px;font-weight:650}
+
+.main{min-width:0}
+.topbar{height:64px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:4}
+.topbar h2{margin:0;font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:-.01em}
+.content{padding:26px;max-width:1600px;margin:auto}
+
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+.metric{position:relative;overflow:hidden;border-radius:3px 3px 10px 10px;border-top:3px solid var(--line)}
+.cards .metric:nth-child(4n+1){border-top-color:var(--till)}
+.cards .metric:nth-child(4n+2){border-top-color:var(--brass)}
+.cards .metric:nth-child(4n+3){border-top-color:var(--amber)}
+.cards .metric:nth-child(4n+4){border-top-color:var(--brick)}
+.metric::after{content:'';position:absolute;top:3px;right:0;width:0;height:0;border-style:solid;border-width:0 15px 15px 0;border-color:transparent var(--paper) transparent transparent;filter:drop-shadow(-1px 1px 1px rgba(0,0,0,.07))}
+.metric .k{color:var(--muted);font-size:12.5px}
+.metric .v{font-family:var(--font-display);font-size:27px;font-weight:700;margin-top:5px;font-variant-numeric:tabular-nums}
+.metric .s{font-size:12px;color:var(--muted);margin-top:3px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.section-title{font-family:var(--font-display);font-size:15.5px;font-weight:700;letter-spacing:-.005em;margin:0 0 12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.toolbar .input{max-width:280px}.spacer{flex:1}
+
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 9px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:middle}
+th{font-size:11.5px;color:var(--muted);letter-spacing:.02em;font-weight:650}
+tbody tr:hover{background:var(--paper)}
+.table-wrap{overflow:auto}
+.badge{display:inline-flex;align-items:center;padding:3px 9px 3px 8px;border-radius:4px;background:#EEEFE6;color:var(--text);font-size:12px;font-weight:650;border-left:3px solid var(--line);white-space:nowrap}
+.badge.good{background:var(--till-soft);color:var(--till-deep);border-left-color:var(--till)}
+.badge.warn{background:var(--amber-soft);color:#7A551A;border-left-color:var(--amber)}
+.badge.danger{background:var(--brick-soft);color:#7C2A1B;border-left-color:var(--brick)}
+
+.modal-bg{position:fixed;inset:0;background:#10131bcc;display:grid;place-items:center;z-index:20;padding:20px}
+.modal{width:min(760px,96vw);max-height:90vh;overflow:auto;background:var(--surface);border-radius:12px;padding:24px;box-shadow:0 24px 70px rgba(0,0,0,.4);position:relative}
+.modal::before{content:'';position:absolute;top:0;left:24px;right:24px;height:3px;background:var(--brass);border-radius:0 0 3px 3px}
+.modal h3{margin:0 0 14px;font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-.01em}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form-grid .full{grid-column:1/-1}
+.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;flex-wrap:wrap}
+
+.toast{position:fixed;right:18px;bottom:18px;z-index:50;background:var(--ink);color:#fff;padding:12px 16px;border-radius:8px;box-shadow:0 14px 40px rgba(0,0,0,.35);max-width:380px;font-size:14px}
+.toast.err{background:var(--brick)}.toast.ok{background:var(--till-deep)}
+
+.pos{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(340px,.7fr);gap:16px}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.product-tile{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:13px;text-align:left;transition:border-color .12s,transform .05s}
+.product-tile:hover{border-color:var(--brass)}.product-tile:active{transform:translateY(1px)}
+.product-tile:disabled{opacity:.42;cursor:not-allowed}
+.product-tile strong{display:block;font-size:14px}.product-tile small{color:var(--muted);line-height:1.6}
+.price{font-family:var(--font-display);font-size:18px;font-weight:700;margin-top:8px;font-variant-numeric:tabular-nums}
+.cart{position:sticky;top:82px}
+.cart-total-wrap{margin:16px 0 14px;padding-top:14px;background-image:repeating-linear-gradient(90deg,var(--line) 0 7px,transparent 7px 15px);background-position:top;background-size:15px 1px;background-repeat:repeat-x}
+.cart-total-label{font-size:12px;color:var(--muted)}
+.cart-total{font-family:var(--font-display);font-size:30px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums;color:var(--text)}
+.cart-line{display:grid;grid-template-columns:1fr 70px 84px 34px;gap:7px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line-soft)}
+
+.meta-row{display:flex;gap:7px;flex-wrap:wrap;margin:4px 0 16px}
+.meta-chip{font-size:12px;color:var(--muted);background:var(--paper);border:1px solid var(--line);padding:3px 9px;border-radius:4px}
+
+.kpi-good{color:var(--till-deep)}.kpi-danger{color:var(--brick)}.muted{color:var(--muted)}.danger-text{color:var(--brick)}
+.right{text-align:right}.mt{margin-top:14px}
+.note{padding:11px 14px;border-radius:6px;background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--brass);font-size:13px;color:var(--muted)}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+code,.mono{font-family:var(--font-mono);font-size:.92em}
+.skeleton{border-radius:6px;background:linear-gradient(90deg,var(--line-soft) 25%,var(--line) 37%,var(--line-soft) 63%);background-size:400% 100%;animation:sk 1.3s ease infinite;height:16px}
+@keyframes sk{0%{background-position:100% 0}100%{background-position:0 0}}
+@media(max-width:1000px){#app{grid-template-columns:84px 1fr}.brand{font-size:11px;padding:8px 4px}.brand::after{display:none}.nav button{font-size:11px;padding:9px 6px;text-align:center}.nav button::before{display:none}.side-foot{display:none}.cards{grid-template-columns:1fr 1fr}.pos{grid-template-columns:1fr}.cart{position:static}}
+@media(max-width:650px){#app{display:block}.sidebar{height:auto;min-height:0;position:static;display:flex;overflow:auto}.brand,.side-foot{display:none}.nav{display:flex;flex-direction:row}.nav button{font-size:12px;white-space:nowrap;width:auto}.topbar{position:static}.content{padding:14px}.cards,.grid2,.grid3,.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.pos{grid-template-columns:1fr}}
+</style>
+<link rel="stylesheet" href="/static/professional.css">
+</head>
+<body>
+<div id="login">
+  <div class="login-shell">
+    <section class="login-branding" aria-label="NEXORA Enterprise Management Platform">
+      <div class="nexora-wordmark"><span class="nexora-symbol" aria-hidden="true">N</span><span>NEXORA</span></div>
+      <p class="login-platform">Enterprise Management Platform</p>
+      <div class="login-intro"><span class="eyebrow">GESTÃO INTEGRADA</span><h2>Controle claro para operações que não podem parar.</h2><p>Uma plataforma para acompanhar pessoas, empresas e operações em um único ambiente.</p></div>
+      <svg class="login-geometry" viewBox="0 0 420 280" fill="none" aria-hidden="true"><path d="M14 225 116 167l87 50 101-116 101 53M14 264l118-66 74 40 110-127 89 50M14 188l92-52 91 52 105-120 103 51" stroke="currentColor" stroke-width="1.2"/><circle cx="203" cy="217" r="5" fill="currentColor"/><circle cx="304" cy="101" r="5" fill="currentColor"/><circle cx="405" cy="154" r="5" fill="currentColor"/></svg>
+    </section>
+    <section class="login-card" aria-labelledby="loginHeading">
+      <div class="login-card-heading"><span class="login-mark" aria-hidden="true">N</span><div><h1 id="loginHeading">Entrar na plataforma</h1><p>Use suas credenciais para continuar.</p></div></div>
+      <form id="loginForm" novalidate>
+        <div class="field"><label class="label" for="loginUser">Usuário</label><input class="input" id="loginUser" name="username" placeholder="Seu usuário" autocomplete="username" autocapitalize="none" spellcheck="false" autofocus required></div>
+        <div class="field"><label class="label" for="loginPass">Senha</label><div class="password-wrap"><input class="input" id="loginPass" name="password" type="password" placeholder="Sua senha" autocomplete="current-password" required><button class="password-toggle" id="toggleLoginPassword" type="button" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div></div>
+        <div id="loginFeedback" class="login-feedback" role="alert" aria-live="polite"></div>
+        <button class="btn login-submit" id="loginSubmit" type="submit"><span class="login-submit-label">Entrar</span><span class="login-spinner" aria-hidden="true"></span></button>
+      </form>
+      <div id="fileWarning" class="login-file-warning hidden">Este arquivo foi aberto sem o servidor. Inicie o sistema e acesse-o pelo navegador.</div>
+    </section>
+  </div>
+</div>
+<div id="app" class="hidden">
+  <aside class="sidebar" id="tenantSidebar"><div class="brand"><span class="brand-mark" aria-hidden="true">N</span><span class="brand-copy"><strong>NEXORA</strong><small id="brand">Minha Loja</small></span></div><nav class="nav" id="nav"></nav><div class="side-foot"><strong id="userName">Usuário</strong><span id="userRole"></span><button class="btn ghost small mt" onclick="logout()">Sair</button></div></aside>
+  <button class="sidebar-backdrop" id="sidebarBackdrop" type="button" aria-label="Fechar navegação" onclick="closeSidebar()"></button>
+  <main class="main"><header class="topbar"><button class="mobile-nav-toggle" id="mobileNavToggle" type="button" aria-label="Abrir navegação" aria-expanded="false" onclick="toggleSidebar()">☰</button><h2 id="pageTitle">Central de Controle NEXORA</h2><div><span id="cashBadge" class="badge warn">Caixa fechado</span></div></header><section class="content" id="view"></section></main>
+</div>
+<div id="modalHost"></div><div id="toast" class="toast hidden"></div>
+<script>
+/* ---------- estado e utilitários ---------- */
+const state={user:null,products:[],customers:[],suppliers:[],users:[],sales:[],cart:[],cash:null,categories:[]};
+const fmt=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
+const num=n=>Number(n||0);
+const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+
+/* ---------- camada de API central, com tratamento de erros ---------- */
+/* ============================================================
+   TEMPO REAL / SINCRONIZAÇÃO ENTRE DISPOSITIVOS
+   ============================================================ */
+
+let realtimeSocket=null;
+let realtimeReconnectTimer=null;
+let realtimePingTimer=null;
+let realtimeConnected=false;
+let realtimeReconnectDelay=1000;
+let realtimeHasConnected=false;
+let realtimePendingEntities=new Set();
+let realtimeFlushTimer=null;
+let realtimeFallbackTimer=null;
+let realtimeRefreshBusy=false;
+let realtimeRefreshDeferred=false;
+
+function realtimeStatus(connected){
+  realtimeConnected=connected;
+
+  // Indicador discreto no topo, se existir.
+  const el=document.getElementById('realtimeStatus');
+
+  if(el){
+    el.textContent=connected?'● Conectado':'● Reconectando...';
+    el.style.opacity=connected?'1':'0.65';
+  }
+}
+
+function realtimeConnect(){
+  try{
+    if(!window.WebSocket || document.hidden) return;
+    if(realtimeSocket &&
+       (realtimeSocket.readyState===WebSocket.OPEN ||
+        realtimeSocket.readyState===WebSocket.CONNECTING)){
+      return;
+    }
+
+    const protocol=location.protocol==='https:'?'wss':'ws';
+    const url=`${protocol}://${location.host}/ws`;
+
+    realtimeSocket=new WebSocket(url);
+
+    realtimeSocket.onopen=()=>{
+      realtimeStatus(true);
+      const reconnected=realtimeHasConnected;
+      realtimeHasConnected=true;
+      realtimeReconnectDelay=1000;
+      clearTimeout(realtimeReconnectTimer);
+
+      clearInterval(realtimePingTimer);
+
+      realtimePingTimer=setInterval(()=>{
+        try{
+          if(realtimeSocket?.readyState===WebSocket.OPEN){
+            realtimeSocket.send('ping');
+          }
+        }catch(e){}
+      },25000);
+      if(reconnected)realtimeRefresh({type:'data_changed',entity:'fallback',company_id:state.user?.company_id});
+    };
+
+    realtimeSocket.onmessage=async(event)=>{
+      try{
+        const data=JSON.parse(event.data||'{}');
+
+        if(data.type==='ping'){
+          return;
+        }
+
+        if(data.type==='data_changed'){
+          if(!state.user || Number(data.company_id)!==Number(state.user.company_id)) return;
+          await realtimeRefresh(data);
+        }
+
+      }catch(e){
+        console.debug('Evento realtime inválido:',e);
+      }
+    };
+
+    realtimeSocket.onclose=()=>{
+      realtimeStatus(false);
+
+      clearInterval(realtimePingTimer);
+
+      clearTimeout(realtimeReconnectTimer);
+      const delay=Math.min(30000,realtimeReconnectDelay)*(0.8+Math.random()*0.4);
+      realtimeReconnectDelay=Math.min(30000,realtimeReconnectDelay*2);
+      realtimeReconnectTimer=setTimeout(()=>{
+        realtimeConnect();
+      },delay);
+    };
+
+    realtimeSocket.onerror=()=>{
+      realtimeStatus(false);
+    };
+
+  }catch(e){
+    realtimeStatus(false);
+
+    clearTimeout(realtimeReconnectTimer);
+
+    realtimeReconnectTimer=setTimeout(()=>{
+      realtimeConnect();
+    },3000);
+  }
+}
+
+async function realtimeRefresh(data){
+  /*
+    Não recarrega a página inteira.
+    Atualiza somente o que estiver sendo visualizado.
+  */
+
+  const page=String(state?.page||state?.currentPage||'').toLowerCase();
+
+  try{
+    if(data.entity==='restaurant'){
+      if(page==='tables'){
+        if(state.restaurantTabId) await showTab(state.restaurantTabId);
+        else await page_tables();
+      }
+      if(page==='kitchen') await page_kitchen();
+      if(page==='dashboard') await page_dashboard();
+      if(page==='products') await page_products();
+      return;
+    }
+
+    if(data.entity==='restaurant_request'){
+      const label=data.request_kind==='BILL'?'pediu a conta':'chamou o garçom';
+      toast(`Mesa ${data.table_name||''} ${label}.`,'ok');
+      if(page==='tables') await page_tables();
+      if(page==='dashboard') await page_dashboard();
+      return;
+    }
+
+    if(
+      data.entity==='stock' ||
+      data.entity==='sale' ||
+      data.entity==='purchase'
+    ){
+      if(page==='stock'){
+        await page_stock();
+      }
+
+      if(page==='products'){
+        await loadProducts();
+        page_products?.();
+      }
+
+      if(page==='dashboard'){
+        await page_dashboard?.();
+      }
+
+      if(page==='pdv'){
+        await loadProducts();
+      }
+
+      return;
+    }
+
+    if(data.entity==='product'){
+      await loadProducts();
+
+      if(page==='products'){
+        page_products?.();
+      }
+
+      if(page==='stock'){
+        page_stock?.();
+      }
+
+      return;
+    }
+
+    if(data.entity==='cash'){
+      if(page==='cash'){
+        page_cash?.();
+      }
+
+      if(page==='dashboard'){
+        page_dashboard?.();
+      }
+
+      return;
+    }
+
+    if(data.entity==='customer'){
+      if(page==='customers'){
+        page_customers?.();
+      }
+
+      return;
+    }
+
+  }catch(e){
+    console.debug('Falha na atualização realtime:',e);
+  }
+}
+
+// Coalesce invalidations and refresh only the active, authenticated screen.
+function realtimeHasModal(){return !!document.querySelector('#modalHost .modal-bg')}
+function realtimeRefresh(data){
+  if(!state.user)return;
+  const accepted=new Set(['fallback','restaurant','restaurant_request','product','stock','sale','purchase','expense','customer','supplier','cash','user','settings','category']);
+  if(!accepted.has(data.entity))return;
+  if(data.entity!=='fallback'&&Number(data.company_id)!==Number(state.user.company_id))return;
+  if(data.entity==='restaurant_request'){
+    const label=data.request_kind==='BILL'?'pediu a conta':'chamou o garÃ§om';
+    toast(`Mesa ${data.table_name||''} ${label}.`,'ok');
+  }
+  realtimePendingEntities.add(data.entity);
+  clearTimeout(realtimeFlushTimer);
+  realtimeFlushTimer=setTimeout(realtimeFlush,220);
+}
+
+async function realtimeFlush(){
+  if(!state.user||document.hidden)return;
+  if(realtimeHasModal()){realtimeRefreshDeferred=true;return}
+  if(realtimeRefreshBusy)return;
+  const entities=new Set(realtimePendingEntities);realtimePendingEntities.clear();
+  if(!entities.size)return;
+  const page=String(state.page||'dashboard').toLowerCase(),all=entities.has('fallback');
+  const has=(...names)=>all||names.some(name=>entities.has(name));
+  const view=document.getElementById('view'),oldScroll=view?.scrollTop||0;
+  const query=page==='products'?view?.querySelector('input[placeholder^="Buscar por nome"]')?.value:
+    page==='stock'?view?.querySelector('input[placeholder="Buscar produto..."]')?.value:
+    page==='pdv'?document.getElementById('posSearch')?.value:undefined;
+  const selected=page==='products'?[...(state._selectedProductIds||[])]:[];
+  const reportRange=page==='reports'?['rep_start','rep_end'].map(id=>document.getElementById(id)?.value):null;
+  const refresh={
+    dashboard:()=>page_dashboard(),
+    tables:()=>state.restaurantTabId?showTab(state.restaurantTabId):page_tables(),
+    kitchen:()=>page_kitchen(),
+    products:async()=>{await page_products();if(query)filterProducts(query);selected.forEach(id=>{const input=document.querySelector(`.product-select[data-product-id="${id}"]`);if(input)toggleProductSelection(id,true);});},
+    stock:async()=>{await page_stock();if(query)filterStock(query);},
+    pdv:async()=>{await Promise.all([loadProducts(),loadCustomers(),refreshCash()]);renderPDV();renderPosProducts(query||'');renderCart();},
+    customers:()=>page_customers(),suppliers:()=>page_suppliers(),purchases:()=>page_purchases(),sales:()=>page_sales(),
+    cash:()=>page_cash(),expenses:()=>page_expenses(),users:()=>page_users(),settings:()=>page_settings(),audit:()=>page_audit(),
+    reports:async()=>{await page_reports();if(reportRange?.[0]&&reportRange?.[1]){document.getElementById('rep_start').value=reportRange[0];document.getElementById('rep_end').value=reportRange[1];await loadReport();}}
+  };
+  const relevant={
+    dashboard:()=>has('product','stock','sale','purchase','expense','customer','supplier','cash','user','restaurant','restaurant_request','category'),
+    products:()=>has('product','stock','sale','purchase','restaurant','category'),stock:()=>has('product','stock','sale','purchase','restaurant'),
+    pdv:()=>has('product','stock','sale','purchase','customer','cash','restaurant'),tables:()=>has('restaurant','restaurant_request','product','stock','customer','sale','cash'),
+    kitchen:()=>has('restaurant','restaurant_request'),customers:()=>has('customer'),suppliers:()=>has('supplier'),purchases:()=>has('purchase','supplier','product','stock'),
+    sales:()=>has('sale','customer','product','stock'),cash:()=>has('cash','sale','expense'),expenses:()=>has('expense'),users:()=>has('user'),settings:()=>has('settings'),
+    reports:()=>has('sale','purchase','expense','product','stock'),audit:()=>has('user','sale','purchase','expense','restaurant','product','stock','cash')
+  };
+  if(!refresh[page]||!relevant[page]?.())return;
+  realtimeRefreshBusy=true;
+  try{await refresh[page]();if(view)view.scrollTop=oldScroll}
+  catch(e){console.debug('Falha na atualizaÃ§Ã£o realtime:',e)}
+  finally{realtimeRefreshBusy=false;if(realtimePendingEntities.size)realtimeFlushTimer=setTimeout(realtimeFlush,220)}
+}
+
+function realtimeNotifyLocal(entity,action='changed'){
+  /*
+    Atualiza a própria tela imediatamente.
+    O servidor continua sendo a fonte oficial.
+  */
+  realtimeRefresh({
+    type:'data_changed',
+    entity,
+    action,
+    local:true
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(realtimeConnect,500);
+  realtimeFallbackTimer=setInterval(()=>{
+    if(!realtimeConnected&&!document.hidden&&state.user)realtimeRefresh({type:'data_changed',entity:'fallback',company_id:state.user.company_id});
+  },45000);
+});
+window.addEventListener('online',()=>{if(!realtimeConnected)realtimeConnect();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!realtimeConnected)realtimeConnect();});
+
+async function api(url,opt={}){
+  opt.headers={...(opt.headers||{}),'Content-Type':'application/json'};
+  let r;
+  try{ r=await fetch(url,opt); }
+  catch(netErr){ throw new Error('Não foi possível conectar ao servidor local. Verifique se o Sistema de Loja foi iniciado (dê dois cliques em run.bat) e se esta página foi aberta em http://127.0.0.1:8000 — e não abrindo o arquivo index.html diretamente.'); }
+  let data=null;
+  try{ data=await r.json(); }catch{}
+  if(r.status===401){
+    if(url!=='/api/login'){const hadSession=!!state.user;state.user=null;showLogin(hadSession?'Sua sessão expirou. Entre novamente para continuar.':'')}
+    throw new Error((data&&data.detail)?data.detail:'Usuário ou senha inválidos.');
+  }
+  if(r.status===403) throw new Error('Você não possui permissão para realizar esta ação.');
+  if(r.status===404) throw new Error((data&&data.detail)?data.detail:'Item não encontrado.');
+  if(r.status===500) throw new Error('Ocorreu um erro no servidor. Tente novamente em instantes.');
+  if(!r.ok) throw new Error((data&&data.detail)?(Array.isArray(data.detail)?'Dados inválidos enviados ao servidor.':data.detail):`Erro na operação (HTTP ${r.status}).`);
+  return data;
+}
+
+/* ---------- toasts, modais, confirmação ---------- */
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;t.classList.remove('hidden');clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>t.classList.add('hidden'),3200)}
+function modal(html){document.getElementById('modalHost').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`}
+function closeModal(){
+  if(typeof stopScanner==='function') stopScanner();
+  document.getElementById('modalHost').innerHTML='';
+  if(realtimeRefreshDeferred){realtimeRefreshDeferred=false;setTimeout(realtimeFlush,80);}
+}
+function confirmModal(title,messageHtml,onConfirm,confirmLabel='Confirmar',danger=true){
+  modal(`<h3>${esc(title)}</h3><p class="muted">${messageHtml}</p><div class="actions"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn ${danger?'danger':'good'}" id="confirmBtn">${esc(confirmLabel)}</button></div>`);
+  const btn=document.getElementById('confirmBtn');
+  btn.onclick=async()=>{btn.disabled=true;try{await onConfirm()}catch(e){btn.disabled=false;toast(e.message,'err')}};
+}
+
+/* ---------- sessão / navegação ---------- */
+function showLogin(message=''){document.getElementById('login').classList.remove('hidden');document.getElementById('app').classList.add('hidden');const f=document.getElementById('loginFeedback');if(f)f.textContent=message;setTimeout(()=>document.getElementById('loginUser')?.focus(),0)}
+function showApp(){document.getElementById('login').classList.add('hidden');document.getElementById('app').classList.remove('hidden')}
+function toggleSidebar(){const side=document.getElementById('tenantSidebar'),backdrop=document.getElementById('sidebarBackdrop'),button=document.getElementById('mobileNavToggle');const open=!side.classList.contains('open');side.classList.toggle('open',open);backdrop.classList.toggle('open',open);button?.setAttribute('aria-expanded',String(open));button?.setAttribute('aria-label',open?'Fechar navegação':'Abrir navegação')}
+function closeSidebar(){document.getElementById('tenantSidebar')?.classList.remove('open');document.getElementById('sidebarBackdrop')?.classList.remove('open');const button=document.getElementById('mobileNavToggle');button?.setAttribute('aria-expanded','false');button?.setAttribute('aria-label','Abrir navegação')}
+function roleLabel(r){return {admin:'Administrador',gerente:'Gerente',vendedor:'Vendedor',caixa:'Caixa',atendente:'Atendente',cozinha:'Cozinha'}[r]||r}
+function isAdmin(){return state.user?.role==='admin'}
+function isManager(){return ['admin','gerente'].includes(state.user?.role)}
+function canManage(){return isManager()}
+function canCancelSale(){return isManager()}
+
+const pages=[['dashboard','Dashboard'],['tables','Mesas e comandas'],['kitchen','Cozinha'],['operacao_rapida','Operação rápida'],['pdv','PDV / Vendas'],['products','Produtos'],['stock','Estoque'],['customers','Clientes'],['suppliers','Fornecedores'],['purchases','Compras'],['sales','Vendas'],['cash','Caixa'],['expenses','Despesas'],['reports','Relatórios'],['users','Usuários'],['settings','Configurações'],['audit','Auditoria']];
+const roleNav={
+  admin:['dashboard','tables','kitchen','pdv','products','stock','customers','suppliers','purchases','sales','cash','expenses','reports','users','settings','audit'],
+  gerente:['dashboard','tables','kitchen','pdv','products','stock','customers','suppliers','purchases','sales','cash','expenses','reports'],
+  vendedor:['dashboard','tables','pdv','products','stock','customers','cash'],
+  caixa:['dashboard','tables','pdv','products','stock','customers','cash'],
+  atendente:['dashboard','tables','pdv','customers','cash'],
+  cozinha:['dashboard','kitchen']
+};
+function allowedPages(){
+  const base=roleNav[state.user?.role]||['dashboard'];
+  const segment=String(state.user?.segment||'LOJA').toUpperCase();
+  const storeOnly=['pdv','operacao_rapida','suppliers','purchases','expenses'];
+  const restaurantOnly=['tables','kitchen'];
+  const visible=base.filter(p=>segment==='RESTAURANTE'?!storeOnly.includes(p):!restaurantOnly.includes(p));
+  if(segment!=='RESTAURANTE'&&!visible.includes('operacao_rapida')) visible.push('operacao_rapida');
+  return visible;
+}
+function buildNav(){const allowed=allowedPages();const arr=pages.filter(([p])=>allowed.includes(p));document.getElementById('nav').innerHTML=arr.map(([p,l])=>`<button data-page="${p}" onclick="go('${p}')">${esc(l)}</button>`).join('')}
+function title(p){return p==='dashboard'?'Central de Controle NEXORA':(pages.find(x=>x[0]===p)||['','Sistema'])[1]}
+
+async function go(p){
+  state.page=p;
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===p));
+  document.getElementById('pageTitle').textContent=title(p);
+  location.hash=p;
+  if(!allowedPages().includes(p)){
+    document.getElementById('view').innerHTML='<div class="card muted">Você não possui permissão para acessar esta página.</div>';
+    return;
+  }
+  const f=window['page_'+p];
+  if(!f) return;
+  document.getElementById('view').innerHTML='<div class="card"><div class="skeleton" style="width:40%;margin-bottom:10px"></div><div class="skeleton" style="width:90%;margin-bottom:8px"></div><div class="skeleton" style="width:75%"></div></div>';
+  try{ await f(); }catch(e){ toast(e.message,'err'); document.getElementById('view').innerHTML=`<div class="card danger-text">Não foi possível carregar esta página: ${esc(e.message)}</div>`; }
+}
+
+async function refreshCash(){
+  try{
+    state.cash=await api('/api/cash/current');
+    const b=document.getElementById('cashBadge');
+    if(state.cash){ b.className='badge good'; b.textContent='Caixa aberto ('+fmt.format(state.cash.expected_amount)+')'; }
+    else{ b.className='badge warn'; b.textContent='Caixa fechado'; }
+  }catch{}
+}
+function table(headers,rows){return `<div class="table-wrap"><table><thead><tr>${headers.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.join('')||`<tr><td colspan="${headers.length}" class="muted">Nenhum registro encontrado.</td></tr>`}</tbody></table></div>`}
+function formVal(id){return document.getElementById(id)?.value?.trim()}
+function stockStatus(p){if(num(p.stock)<=0)return{text:'Sem estoque',cls:'danger'};if(num(p.stock)<=num(p.min_stock))return{text:'Estoque baixo',cls:'warn'};return{text:'Normal',cls:'good'}}
+
+document.getElementById('toggleLoginPassword').onclick=()=>{const input=document.getElementById('loginPass'),button=document.getElementById('toggleLoginPassword'),visible=input.type==='password';input.type=visible?'text':'password';button.textContent=visible?'Ocultar':'Mostrar';button.setAttribute('aria-label',visible?'Ocultar senha':'Mostrar senha');button.setAttribute('aria-pressed',String(visible));input.focus()};
+document.getElementById('loginForm').onsubmit=async e=>{
+  e.preventDefault();
+  const user=document.getElementById('loginUser').value.trim(),password=document.getElementById('loginPass').value;
+  const feedback=document.getElementById('loginFeedback'),submit=document.getElementById('loginSubmit'),label=submit.querySelector('.login-submit-label');
+  feedback.textContent='';
+  if(!user||!password){feedback.textContent='Informe seu usuário e sua senha.';(!user?document.getElementById('loginUser'):document.getElementById('loginPass')).focus();return}
+  submit.disabled=true;submit.setAttribute('aria-busy','true');label.textContent='Entrando…';
+  try{const d=await api('/api/login',{method:'POST',body:JSON.stringify({username:user,password})});state.user=d.user;await start()}
+  catch(err){feedback.textContent=err.message;document.getElementById('loginPass').focus()}
+  finally{submit.disabled=false;submit.removeAttribute('aria-busy');label.textContent='Entrar'}
+};
+document.getElementById('nav').addEventListener('click',e=>{if(e.target.closest('button'))closeSidebar()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSidebar()});
+async function logout(){ await api('/api/logout',{method:'POST'}).catch(()=>{}); state.user=null; showLogin(); }
+async function start(){
+  if(state.user?.role==='master'){ window.location.href='/master'; return; }
+  showApp();
+  document.getElementById('userName').textContent=state.user.name;
+  document.getElementById('userRole').textContent=roleLabel(state.user.role);
+  closeSidebar();
+  buildNav();
+  try{ const s=await api('/api/settings'); document.getElementById('brand').textContent=s.store_name|| (state.user.segment==='RESTAURANTE'?'Meu Restaurante':'Minha Loja'); }catch{}
+  await refreshCash();
+  const startHash=(location.hash||'#dashboard').slice(1);
+  go(allowedPages().includes(startHash)?startHash:allowedPages()[0]);
+}
+
+
+/* ---------- modo operação rápida ---------- */
+async function page_operacao_rapida(){
+  const ps=await loadProducts();
+
+  document.getElementById('view').innerHTML=`
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px">
+          <h2 style="margin:0 0 5px">Operação rápida</h2>
+          <div class="muted">Venda, consulte estoque e encontre produtos sem navegar por várias telas.</div>
+        </div>
+        <button class="btn secondary" onclick="scannerModal('pdv')">Escanear produto</button>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3 class="section-title">Buscar produto</h3>
+
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <input
+            class="input"
+            id="quickProductSearch"
+            placeholder="Nome, SKU ou código de barras..."
+            autocomplete="off"
+            autofocus
+            oninput="renderQuickProducts(this.value)"
+            onkeydown="quickProductKey(event)">
+          <button class="btn secondary" type="button" onclick="scannerModal('pdv')">Ler</button>
+        </div>
+
+        <div id="quickProducts">
+          ${renderQuickProductsHtml(ps)}
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">Ações rápidas</h3>
+
+        <div style="display:grid;gap:10px">
+          <button class="btn" type="button" onclick="quickFocusSearch()">
+            Buscar produto
+          </button>
+
+          <button class="btn secondary" type="button" onclick="scannerModal('pdv')">
+            Escanear código de barras
+          </button>
+
+          ${canManage()?`
+          <button class="btn secondary" type="button" onclick="scannerModal('stock')">
+            Entrada de estoque por câmera
+          </button>`:''}
+
+          <button class="btn secondary" type="button" onclick="go('products')">
+            Consultar produtos
+          </button>
+
+          <button class="btn secondary" type="button" onclick="go('stock')">
+            Consultar estoque
+          </button>
+
+          <button class="btn secondary" type="button" onclick="go('dashboard')">
+            Voltar ao painel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt">
+      <h3 class="section-title">Estoque em alerta</h3>
+      <div id="quickLowStock">
+        ${renderQuickLowStock(ps)}
+      </div>
+    </div>
+  `;
+
+  setTimeout(()=>quickFocusSearch(),100);
+}
+
+function renderQuickProductsHtml(ps,q=''){
+  const query=String(q||'').trim().toLowerCase();
+
+  let items=ps.filter(p=>p.active);
+
+  if(query){
+    items=items.filter(p=>
+      [p.name,p.sku,p.barcode,p.category]
+        .join(' ')
+        .toLowerCase()
+        .includes(query)
+    );
+  }
+
+  items=items.slice(0,12);
+
+  if(!items.length){
+    return `<div class="note">Nenhum produto encontrado.</div>`;
+  }
+
+  return items.map(p=>{
+    const st=stockStatus(p);
+    return `
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border)">
+        <div style="flex:1;min-width:0">
+          <b>${esc(p.name)}</b>
+          <div class="muted" style="font-size:12px">
+            ${esc(p.sku||'Sem SKU')}
+            ${p.barcode?` · ${esc(p.barcode)}`:''}
+          </div>
+        </div>
+
+        <div style="text-align:right">
+          <b>${p.stock}</b>
+          <div><span class="badge ${st.cls}">${st.text}</span></div>
+        </div>
+
+        <button class="btn small" type="button" onclick="quickAddProduct(${p.id})">
+          Adicionar
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderQuickProducts(q){
+  const box=document.getElementById('quickProducts');
+  if(!box) return;
+  box.innerHTML=renderQuickProductsHtml(state.products,q);
+}
+
+function renderQuickLowStock(ps){
+  const low=ps
+    .filter(p=>p.active && num(p.stock)<=num(p.min_stock))
+    .slice(0,10);
+
+  if(!low.length){
+    return `<div class="note">Nenhum produto está abaixo do estoque mínimo.</div>`;
+  }
+
+  return table(
+    ['Produto','Estoque','Mínimo','Status',''],
+    low.map(p=>{
+      const st=stockStatus(p);
+      return `
+        <tr>
+          <td><b>${esc(p.name)}</b></td>
+          <td>${p.stock} ${esc(p.unit||'')}</td>
+          <td>${p.min_stock}</td>
+          <td><span class="badge ${st.cls}">${st.text}</span></td>
+          <td>
+            ${canManage()
+              ? `<button class="btn small secondary" onclick="stockInModal(${p.id})">Entrada</button>`
+              : ''}
+          </td>
+        </tr>
+      `;
+    })
+  );
+}
+
+function quickAddProduct(id){
+  const p=state.products.find(x=>x.id===id);
+
+  if(!p){
+    toast('Produto não encontrado.','err');
+    return;
+  }
+
+  if(!p.active){
+    toast('Esse produto está inativo.','err');
+    return;
+  }
+
+  if(num(p.stock)<=0){
+    toast(`${p.name} está sem estoque.`,'err');
+    return;
+  }
+
+  addCart(id);
+  toast(`${p.name} adicionado à venda.`,'ok');
+
+  quickFocusSearch();
+}
+
+function quickProductKey(e){
+  if(e.key!=='Enter') return;
+
+  const input=e.target;
+  const q=String(input.value||'').trim().toLowerCase();
+
+  if(!q) return;
+
+  e.preventDefault();
+
+  const p=state.products.find(x=>
+    x.active &&
+    (
+      String(x.barcode||'').trim().toLowerCase()===q ||
+      String(x.sku||'').trim().toLowerCase()===q
+    )
+  );
+
+  if(p){
+    quickAddProduct(p.id);
+    input.value='';
+    renderQuickProducts('');
+    return;
+  }
+
+  const matches=state.products.filter(x=>
+    x.active &&
+    [x.name,x.sku,x.barcode,x.category]
+      .join(' ')
+      .toLowerCase()
+      .includes(q)
+  );
+
+  if(matches.length===1){
+    quickAddProduct(matches[0].id);
+    input.value='';
+    renderQuickProducts('');
+  }else{
+    toast('Produto não encontrado.','err');
+  }
+}
+
+function quickFocusSearch(){
+  const input=document.getElementById('quickProductSearch');
+  if(input){
+    input.focus();
+    input.select();
+  }
+}
+
+
+/* ---------- dashboard ---------- */
+async function page_dashboard(){
+  const d=await api('/api/dashboard');
+  const isRestaurant=state.user?.segment==='RESTAURANTE';
+  document.getElementById('view').innerHTML=`<div class="cards">
+<div class="card metric"><div class="k">Faturamento hoje</div><div class="v">${fmt.format(d.sales_today)}</div><div class="s">${d.sales_count_today} venda(s) concluída(s)</div></div>
+<div class="card metric"><div class="k">Ticket médio</div><div class="v">${fmt.format(d.average_ticket)}</div><div class="s">sobre vendas de hoje</div></div>
+${isRestaurant?`<div class="card metric"><div class="k">Mesas abertas</div><div class="v">${d.open_tables}</div><div class="s">${d.open_tabs} comanda(s) ativa(s)</div></div>`:''}
+<div class="card metric"><div class="k">Saldo esperado do caixa</div><div class="v">${d.cash_balance===null?'—':fmt.format(d.cash_balance)}</div><div class="s">${d.cash_balance===null?'caixa fechado':'sessão atual'}</div></div>
+${!isRestaurant?`<div class="card metric"><div class="k">Despesas hoje</div><div class="v">${fmt.format(d.expenses_today)}</div><div class="s">registradas no sistema</div></div>`:''}
+<div class="card metric"><div class="k">Valor do estoque</div><div class="v">${fmt.format(d.stock_value)}</div><div class="s">estimado pelo custo</div></div>
+<div class="card metric"><div class="k">Estoque baixo</div><div class="v ${d.low_stock.length?'kpi-danger':'kpi-good'}">${d.low_stock.length}</div><div class="s">itens em alerta</div></div>
+${isRestaurant?`<div class="card metric"><div class="k">Pedidos enviados à cozinha</div><div class="v">${d.orders_today}</div><div class="s">pedidos lançados hoje</div></div>`:''}</div></div>
+<div class="grid2"><div class="card"><h3 class="section-title">Estoque baixo</h3>${table(['Produto','Estoque','Mínimo','Status'],d.low_stock.map(x=>`<tr><td>${esc(x.name)}</td><td>${x.stock} ${esc(x.unit||'')}</td><td>${x.min_stock}</td><td><span class="badge ${stockStatus(x).cls}">${stockStatus(x).text}</span></td></tr>`))}</div><div class="card"><h3 class="section-title">Mais vendidos</h3>${table(['Produto','Qtd.','Receita'],d.top_products.map(x=>`<tr><td>${esc(x.name)}</td><td>${num(x.qty).toFixed(2)}</td><td>${fmt.format(x.revenue)}</td></tr>`))}</div></div>
+<div class="card mt"><h3 class="section-title">Formas de pagamento hoje</h3>${table(['Forma','Vendas','Total'],d.payment_methods.map(x=>`<tr><td>${esc(x.payment_method)}</td><td>${x.count}</td><td>${fmt.format(x.total)}</td></tr>`))}</div>
+<div class="card mt"><h3 class="section-title">Vendas recentes</h3>${table(['#','Cliente','Pagamento','Total','Data',''],d.recent_sales.map(x=>`<tr><td>${x.id}</td><td>${esc(x.customer)}</td><td>${esc(x.payment_method)}</td><td>${fmt.format(x.total)}</td><td>${esc(x.created_at)}</td><td><button class="btn small secondary" onclick="saleDetail(${x.id})">Detalhes</button></td></tr>`))}</div>`;
+}
+
+/* ---------- produtos ---------- */
+async function loadProducts(includeInactive=false){state.products=await api('/api/products'+(includeInactive?'?include_inactive=true':''));return state.products}
+async function page_products(){
+  const ps=await loadProducts(canManage()&&state._showInactive);
+  state.categories=await api('/api/restaurant/categories').catch(()=>[]);
+  state._selectedProductIds=new Set();
+  state._visibleProductIds=ps.map(p=>Number(p.id));
+
+  document.getElementById('view').innerHTML=`<div class="toolbar">
+    <input class="input" placeholder="Buscar por nome, SKU ou código de barras..." oninput="filterProducts(this.value)">
+    <span class="spacer"></span>
+    ${canManage()?`<button class="btn danger" id="deleteSelectedProductsBtn" onclick="deleteSelectedProductsConfirm()" disabled>Excluir selecionados (0)</button>`:''}
+    ${canManage()?`<label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)"><input type="checkbox" id="showInactiveChk" ${state._showInactive?'checked':''} onchange="toggleShowInactive(this.checked)"> Mostrar inativos</label>`:''}
+    ${canManage()?`<button class="btn secondary" onclick="categoryModal()">Categorias</button><button class="btn" onclick="productModal()">+ Novo produto</button>`:''}
+    ${canManage()?`<button class="btn secondary" onclick="scannerModal('product')">Escanear código</button>`:''}
+    ${canManage()?`<button class="btn secondary" onclick="download('/api/export/products')">Exportar CSV</button>`:''}
+  </div>
+  <div class="card" id="productsTable">${renderProducts(ps)}</div>`;
+}
+
+function toggleShowInactive(v){
+  state._showInactive=v;
+  state._selectedProductIds=new Set();
+  page_products();
+}
+
+function updateBulkDeleteButton(){
+  const btn=document.getElementById('deleteSelectedProductsBtn');
+  if(!btn)return;
+
+  const count=state._selectedProductIds?.size||0;
+  btn.textContent=`Excluir selecionados (${count})`;
+  btn.disabled=count===0;
+}
+
+function toggleProductSelection(id,checked){
+  if(!state._selectedProductIds)state._selectedProductIds=new Set();
+
+  id=Number(id);
+
+  if(checked)state._selectedProductIds.add(id);
+  else state._selectedProductIds.delete(id);
+
+  const visible=state._visibleProductIds||[];
+  const allSelected=visible.length>0&&visible.every(pid=>state._selectedProductIds.has(pid));
+
+  const selectAll=document.getElementById('selectAllProducts');
+  if(selectAll)selectAll.checked=allSelected;
+
+  updateBulkDeleteButton();
+}
+
+function toggleAllProductSelection(checked){
+  if(!state._selectedProductIds)state._selectedProductIds=new Set();
+
+  const visible=state._visibleProductIds||[];
+
+  visible.forEach(id=>{
+    id=Number(id);
+    if(checked)state._selectedProductIds.add(id);
+    else state._selectedProductIds.delete(id);
+  });
+
+  document.querySelectorAll('.product-select').forEach(el=>{
+    el.checked=checked;
+  });
+
+  updateBulkDeleteButton();
+}
+
+function renderProducts(ps){
+  state._visibleProductIds=ps.map(p=>Number(p.id));
+
+  const headers=(canManage()?['<input type="checkbox" id="selectAllProducts" onchange="toggleAllProductSelection(this.checked)">']:[]).concat([
+    'Produto',
+    'SKU',
+    'Código de barras',
+    'Categoria',
+    'Custo',
+    'Pre?o',
+    'Estoque',
+    'Status',
+    ''
+  ]);
+
+  const rows=ps.map(p=>{
+    const st=stockStatus(p);
+
+    const selection=canManage()
+      ? `<input type="checkbox" class="product-select" data-product-id="${p.id}" ${state._selectedProductIds?.has(Number(p.id))?'checked':''} onchange="toggleProductSelection(${p.id},this.checked)">`
+      : '';
+
+    const actions=canManage()?`<div class="row-actions">
+      <button class="btn small secondary" onclick="productModal(${p.id})">Editar</button>
+      <button class="btn small ${p.active?'danger':'good'}" onclick="toggleProductActive(${p.id},${p.active?'false':'true'})">${p.active?'Desativar':'Ativar'}</button>
+      <button class="btn small ghost" onclick="deleteProductConfirm(${p.id})">Excluir</button>
+    </div>`:'';
+
+    return `<tr>
+      ${canManage()?`<td>${selection}</td>`:''}
+      <td><b>${esc(p.name)}</b><br><small class="muted">${esc(p.unit||'')}</small></td>
+      <td>${esc(p.sku||'')}</td>
+      <td>${esc(p.barcode||'')}</td>
+      <td>${esc(p.category||'')}</td>
+      <td>${fmt.format(p.cost)}</td>
+      <td><b>${fmt.format(p.price)}</b></td>
+      <td><b>${p.stock}</b> <span class="badge ${st.cls}">${st.text}</span></td>
+      <td>${p.active?'<span class="badge good">Ativo</span>':'<span class="badge">Inativo</span>'}</td>
+      <td>${actions}</td>
+    </tr>`;
+  });
+
+  return `<div class="table-wrap"><table>
+    <thead><tr>${headers.map(x=>`<th>${x}</th>`).join('')}</tr></thead>
+    <tbody>${rows.join('')||`<tr><td colspan="${headers.length}" class="muted">Nenhum registro encontrado.</td></tr>`}</tbody>
+  </table></div>`;
+}
+
+function toggleProductActive(id,active){
+  const p=state.products.find(x=>x.id===id);
+  confirmModal(active?'Ativar produto':'Desativar produto',`Tem certeza que deseja ${active?'ativar':'desativar'} <b>${esc(p.name)}</b>?`,async()=>{
+    await api('/api/products/'+id+'/status',{method:'PATCH',body:JSON.stringify({active})});
+    closeModal();
+    toast('Produto atualizado');
+    page_products();
+  },active?'Ativar':'Desativar',!active);
+}
+
+function deleteProductConfirm(id){
+  const p=state.products.find(x=>x.id===id);
+  confirmModal('Excluir produto',`Tem certeza que deseja excluir <b>${esc(p.name)}</b>? Produtos com hist?rico de vendas, compras ou movimenta??es s?o apenas inativados, n?o apagados.`,async()=>{
+    const r=await api('/api/products/'+id,{method:'DELETE'});
+    closeModal();
+    toast(r.message||'Produto removido');
+    page_products();
+  },'Excluir');
+}
+
+function deleteSelectedProductsConfirm(){
+  const ids=[...(state._selectedProductIds||[])];
+
+  if(!ids.length){
+    toast('Selecione pelo menos um produto.','err');
+    return;
+  }
+
+  const selectedProducts=ids
+    .map(id=>state.products.find(p=>Number(p.id)===Number(id)))
+    .filter(Boolean);
+
+  const preview=selectedProducts
+    .slice(0,6)
+    .map(p=>`? ${esc(p.name)}`)
+    .join('<br>');
+
+  const extra=selectedProducts.length>6
+    ? `<br>? e mais ${selectedProducts.length-6} produto(s)`
+    : '';
+
+  confirmModal(
+    'Excluir produtos selecionados',
+    `Voc? selecionou <b>${ids.length} produto(s)</b>.<br><br>${preview}${extra}<br><br>Produtos com hist?rico de vendas, compras ou movimenta??es ser?o apenas inativados para preservar os registros.`,
+    async()=>{
+      const r=await api('/api/products/bulk-delete',{
+        method:'POST',
+        body:JSON.stringify({ids})
+      });
+
+      closeModal();
+
+      const partes=[];
+
+      if(r.deleted)partes.push(`${r.deleted} exclu?do(s)`);
+      if(r.deactivated)partes.push(`${r.deactivated} inativado(s)`);
+      if(r.not_found)partes.push(`${r.not_found} n?o encontrado(s)`);
+
+      toast(partes.join(' ? ')||r.message||'Opera??o conclu?da');
+      state._selectedProductIds=new Set();
+      page_products();
+    },
+    'Excluir'
+  );
+}
+
+function filterProducts(q){
+  q=q.toLowerCase();
+
+  state._selectedProductIds=new Set();
+
+  const filtered=state.products.filter(p=>
+    [p.name,p.sku,p.barcode,p.category]
+      .join(' ')
+      .toLowerCase()
+      .includes(q)
+  );
+
+  state._visibleProductIds=filtered.map(p=>Number(p.id));
+
+  document.getElementById('productsTable').innerHTML=renderProducts(filtered);
+  updateBulkDeleteButton();
+}
+
+function categoryModal(){modal(`<h3>Categorias</h3><div class="form-grid"><div class="field full"><span class="label">Nova categoria</span><input class="input" id="category_name" maxlength="100" placeholder="Ex.: Bebidas"></div></div><div class="actions"><button class="btn ghost" onclick="closeModal()">Fechar</button><button class="btn" onclick="categoryCreate()">Cadastrar</button></div><div class="card mt">${table(['Categoria','Status'],state.categories.map(c=>`<tr><td>${esc(c.name)}</td><td><span class="badge good">Ativa</span></td></tr>`))}</div>`)}
+async function categoryCreate(){try{await api('/api/restaurant/categories',{method:'POST',body:JSON.stringify({name:formVal('category_name')})});state.categories=await api('/api/restaurant/categories');toast('Categoria cadastrada');categoryModal()}catch(e){toast(e.message,'err')}}
+
+function productModal(id){
+  const p=state.products.find(x=>x.id===id)||{};
+  modal(`<h3>${id?'Editar':'Novo'} produto</h3><form id="productForm"><div class="form-grid">
+  <div class="field full"><span class="label">Nome *</span><input class="input" id="p_name" value="${esc(p.name||'')}" required></div>
+  <div class="field full"><span class="label">Descrição</span><input class="input" id="p_description" value="${esc(p.description||'')}" maxlength="1000"></div>
+  <div class="field"><span class="label">SKU</span><input class="input" id="p_sku" value="${esc(p.sku||'')}"></div>
+  <div class="field">
+  <span class="label">Código de barras</span>
+  <div style="display:flex;gap:8px">
+    <input class="input" id="p_barcode" value="${esc(p.barcode||'')}" autocomplete="off" inputmode="numeric" style="flex:1">
+    <button class="btn secondary" type="button" onclick="scannerModal('product')">Escanear</button>
+  </div>
+  <small class="muted">Leia o código pela câmera ou digite manualmente.</small>
+</div>
+  <div class="field"><span class="label">Categoria</span><select class="input" id="p_category"><option value="">Sem categoria</option>${[...new Set([...state.categories.map(c=>c.name),...(p.category?[p.category]:[])])].map(c=>`<option value="${esc(c)}" ${c===p.category?'selected':''}>${esc(c)}</option>`).join('')}</select></div>
+  <div class="field"><span class="label">Unidade</span><input class="input" id="p_unit" value="${esc(p.unit||'UN')}"></div>
+  <div class="field"><span class="label">Custo</span><input class="input" id="p_cost" type="number" step="0.01" value="${p.cost??0}"></div>
+  <div class="field"><span class="label">Preço de venda</span><input class="input" id="p_price" type="number" step="0.01" value="${p.price??0}"></div>
+  ${id?`<div class="field"><span class="label">Estoque atual</span><input class="input" value="${p.stock??0}" disabled></div><div class="note full">O estoque não é alterado por aqui. Use as ações da tela de Estoque (Entrada, Retirada, Definir ou Zerar).</div>`:`<div class="field"><span class="label">Estoque inicial</span><input class="input" id="p_stock" type="number" step="0.001" value="0"></div>`}
+  <div class="field"><span class="label">Estoque mínimo</span><input class="input" id="p_min" type="number" step="0.001" value="${p.min_stock??0}"></div>
+  <div class="field"><span class="label">Ativo</span><select class="input" id="p_active"><option value="1" ${p.active!==0?'selected':''}>Sim</option><option value="0" ${p.active===0?'selected':''}>Não</option></select></div>
+  </div><div class="actions"><button type="button" class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn">Salvar</button></div></form>`);
+  document.getElementById('productForm').onsubmit=async e=>{
+    e.preventDefault();
+    const data={name:formVal('p_name'),description:formVal('p_description')||'',sku:formVal('p_sku')||null,barcode:formVal('p_barcode')||null,category:formVal('p_category')||null,unit:formVal('p_unit')||'UN',cost:num(formVal('p_cost')),price:num(formVal('p_price')),min_stock:num(formVal('p_min')),active:formVal('p_active')==='1'};
+    if(!id) data.stock=num(formVal('p_stock'));
+    try{
+      const r=await api(id?'/api/products/'+id:'/api/products',{method:id?'PUT':'POST',body:JSON.stringify(data)});
+      closeModal();
+      toast((r&&r.message)?r.message:'Produto salvo');
+      page_products();
+    }catch(err){ toast(err.message,'err'); }
+  };
+}
+
+/* ---------- estoque ---------- */
+function stockTypeLabel(t){const m={'in':'Entrada',entrada:'Entrada','out':'Saída',saida:'Saída',adjust:'Ajuste',ajuste:'Ajuste',set:'Definição',definicao:'Definição',zero:'Zerado',zerado:'Zerado'};return m[String(t||'').toLowerCase()]||t||'—'}
+async function page_stock(){
+  const [ps,mv]=await Promise.all([loadProducts(),api('/api/stock/movements')]);
+  state._stockMovements=mv;
+  document.getElementById('view').innerHTML=`<div class="toolbar"><input class="input" placeholder="Buscar produto..." oninput="filterStock(this.value)"><button class="btn secondary" onclick="scannerModal('stock')">Escanear produto</button><span class="spacer"></span><button class="btn secondary" onclick="download('/api/export/stock_movements')">Exportar CSV</button></div>
+  <div class="grid2">
+    <div class="card"><h3 class="section-title">Posição atual</h3><div id="stockPosition">${renderStockPosition(ps)}</div></div>
+    <div class="card"><h3 class="section-title">Movimentações</h3>${table(['Data','Produto','Tipo','Qtd.','Motivo','Usuário','Referência'],mv.map(x=>`<tr><td>${esc(x.created_at)}</td><td>${esc(x.product)}</td><td>${esc(stockTypeLabel(x.type))}</td><td>${x.qty}</td><td>${esc(x.reason||'')}</td><td>${esc(x.user_name||'')}</td><td>${esc(x.reference||'')}</td></tr>`))}</div>
+  </div>`;
+}
+function renderStockPosition(ps){
+  const mgmt=canManage();
+  return table(['Produto','Estoque','Mínimo','Status'].concat(mgmt?['Ações']:[]),ps.map(p=>{
+    const st=stockStatus(p);
+    const actions=mgmt?`<td><div class="row-actions"><button class="btn small secondary" onclick="stockInModal(${p.id})">Entrada</button><button class="btn small secondary" onclick="stockOutModal(${p.id})">Retirada</button><button class="btn small ghost" onclick="stockSetModal(${p.id})">Definir</button><button class="btn small danger" onclick="stockZeroConfirm(${p.id})">Zerar</button></div></td>`:'';
+    return `<tr><td><b>${esc(p.name)}</b></td><td>${p.stock} ${esc(p.unit||'')}</td><td>${p.min_stock}</td><td><span class="badge ${st.cls}">${st.text}</span></td>${actions}</tr>`;
+  }));
+}
+function filterStock(q){q=q.toLowerCase();document.getElementById('stockPosition').innerHTML=renderStockPosition(state.products.filter(p=>[p.name,p.sku,p.barcode].join(' ').toLowerCase().includes(q)))}
+function stockInModal(id){
+  const p=state.products.find(x=>x.id===id);
+
+  if(!p){
+    toast('Produto não encontrado.','err');
+    return;
+  }
+
+  modal(`
+    <h3>Entrada de estoque</h3>
+
+    <p class="muted">
+      <b>${esc(p.name)}</b> — estoque atual:
+      <b>${p.stock} ${esc(p.unit||'')}</b>
+    </p>
+
+    <div class="actions" style="margin-bottom:14px">
+      <button
+        type="button"
+        class="btn secondary"
+        onclick="closeModal();scannerModal('stock')">
+        Escanear outro produto
+      </button>
+    </div>
+
+    <form id="stkForm">
+
+      <div class="field">
+        <span class="label">Quantidade</span>
+        <input
+          class="input"
+          id="stk_qty"
+          type="number"
+          step="0.001"
+          min="0.001"
+          required
+          autofocus>
+      </div>
+
+      <div class="field">
+        <span class="label">Motivo</span>
+        <input
+          class="input"
+          id="stk_reason"
+          value="Entrada de mercadoria">
+      </div>
+
+      <div class="actions">
+        <button
+          type="button"
+          class="btn ghost"
+          onclick="closeModal()">
+          Cancelar
+        </button>
+
+        <button class="btn good">
+          Registrar entrada
+        </button>
+      </div>
+
+    </form>
+  `);
+
+  document.getElementById('stkForm').onsubmit=async e=>{
+    e.preventDefault();
+
+    const qty=num(formVal('stk_qty'));
+
+    if(!(qty>0)){
+      return toast('Informe uma quantidade válida.','err');
+    }
+
+    try{
+      const r=await api('/api/stock/adjust',{
+        method:'POST',
+        body:JSON.stringify({
+          product_id:id,
+          qty:qty,
+          reason:formVal('stk_reason')
+        })
+      });
+
+      closeModal();
+
+      toast(`Estoque de ${p.name}: ${p.stock} → ${r.stock}`);
+
+      await loadProducts();
+      page_stock();
+
+      // Continua o processo de conferência/entrada
+      setTimeout(()=>{
+        scannerModal('stock');
+      },300);
+
+    }catch(err){
+      toast(err.message,'err');
+    }
+  };
+}
+
+function stockOutModal(id){
+  const p=state.products.find(x=>x.id===id);
+  modal(`<h3>Retirada de estoque</h3><p class="muted"><b>${esc(p.name)}</b> — estoque atual: <b>${p.stock} ${esc(p.unit||'')}</b></p><form id="stkForm"><div class="field"><span class="label">Quantidade</span><input class="input" id="stk_qty" type="number" step="0.001" min="0.001" required autofocus></div><div class="field"><span class="label">Motivo *</span><input class="input" id="stk_reason" placeholder="Ex.: produto danificado" required></div><div class="actions"><button type="button" class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn danger">Registrar retirada</button></div></form>`);
+  document.getElementById('stkForm').onsubmit=async e=>{
+    e.preventDefault(); const qty=num(formVal('stk_qty')); const reason=formVal('stk_reason');
+    if(!(qty>0)) return toast('Informe uma quantidade válida.','err');
+    if(!reason) return toast('Informe o motivo da retirada.','err');
+    try{ const r=await api('/api/stock/adjust',{method:'POST',body:JSON.stringify({product_id:id,qty:-qty,reason})}); closeModal(); toast(`Estoque de ${p.name}: ${p.stock} → ${r.stock}`); page_stock(); }
+    catch(err){ toast(err.message,'err'); }
+  };
+}
+function stockSetModal(id){
+  const p=state.products.find(x=>x.id===id);
+  modal(`<h3>Definir estoque</h3><p class="muted"><b>${esc(p.name)}</b> — estoque atual: <b>${p.stock} ${esc(p.unit||'')}</b></p><form id="stkForm"><div class="field"><span class="label">Nova quantidade</span><input class="input" id="stk_qty" type="number" step="0.001" min="0" value="${p.stock}" required autofocus></div><div class="field"><span class="label">Motivo</span><input class="input" id="stk_reason" value="Contagem de estoque"></div><div class="actions"><button type="button" class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn">Salvar quantidade</button></div></form>`);
+  document.getElementById('stkForm').onsubmit=async e=>{
+    e.preventDefault(); const stockQty=num(formVal('stk_qty'));
+    if(stockQty<0) return toast('Quantidade inválida.','err');
+    try{ const r=await api('/api/stock/set',{method:'POST',body:JSON.stringify({product_id:id,stock:stockQty,reason:formVal('stk_reason')})}); closeModal(); toast(r.message||('Estoque definido para '+r.stock)); page_stock(); }
+    catch(err){ toast(err.message,'err'); }
+  };
+}
+function stockZeroConfirm(id){
+  const p=state.products.find(x=>x.id===id);
+  confirmModal('Zerar estoque',`Tem certeza que deseja zerar o estoque de <b>${esc(p.name)}</b>? O histórico de movimentações não será apagado.`,async()=>{
+    const r=await api('/api/stock/zero/'+id,{method:'POST'}); closeModal(); toast(r.message||`Estoque zerado (removido: ${r.removed})`); page_stock();
+  },'Zerar estoque');
+}
+
+/* ---------- clientes / fornecedores ---------- */
+async function page_customers(){state.customers=await api('/api/customers');document.getElementById('view').innerHTML=`<div class="toolbar"><button class="btn" onclick="partyModal('customer')">+ Novo cliente</button><span class="spacer"></span><button class="btn secondary" onclick="download('/api/export/customers')">Exportar CSV</button></div><div class="card">${renderParties(state.customers)}</div>`}
+async function page_suppliers(){state.suppliers=await api('/api/suppliers');document.getElementById('view').innerHTML=`<div class="toolbar">${canManage()?`<button class="btn" onclick="partyModal('supplier')">+ Novo fornecedor</button>`:''}<span class="spacer"></span>${canManage()?`<button class="btn secondary" onclick="download('/api/export/suppliers')">Exportar CSV</button>`:''}</div><div class="card">${renderParties(state.suppliers)}</div>`}
+function renderParties(a){return table(['Nome','CPF/CNPJ','Telefone','E-mail','Endereço'],a.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.cpf_cnpj||'')}</td><td>${esc(x.phone||'')}</td><td>${esc(x.email||'')}</td><td>${esc(x.address||'')}</td></tr>`))}
+function partyModal(kind){
+  const plural=kind==='customer'?'customers':'suppliers'; const lab=kind==='customer'?'cliente':'fornecedor';
+  modal(`<h3>Novo ${lab}</h3><form id="partyForm"><div class="form-grid"><div class="field full"><span class="label">Nome *</span><input class="input" id="pa_name" required></div><div class="field"><span class="label">CPF/CNPJ</span><input class="input" id="pa_doc"></div><div class="field"><span class="label">Telefone</span><input class="input" id="pa_phone"></div><div class="field"><span class="label">E-mail</span><input class="input" id="pa_email"></div><div class="field full"><span class="label">Endereço</span><input class="input" id="pa_address"></div><div class="field full"><span class="label">Observações</span><textarea class="input" id="pa_notes"></textarea></div></div><div class="actions"><button type="button" class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn">Salvar</button></div></form>`);
+  document.getElementById('partyForm').onsubmit=async e=>{
+    e.preventDefault();
+    try{ await api('/api/'+plural,{method:'POST',body:JSON.stringify({name:formVal('pa_name'),cpf_cnpj:formVal('pa_doc'),phone:formVal('pa_phone'),email:formVal('pa_email'),address:formVal('pa_address'),notes:formVal('pa_notes')})}); closeModal(); toast('Cadastro salvo'); window['page_'+plural](); }
+    catch(err){ toast(err.message,'err'); }
+  };
+}
+
+/* ---------- PDV ---------- */
+async function page_pdv(){ await Promise.all([loadProducts(),loadCustomers(),refreshCash()]); state.cart=[]; renderPDV(); }
+async function loadCustomers(){state.customers=await api('/api/customers')}
+function renderPDV(){
+  document.getElementById('view').innerHTML=`<div class="pos"><div><div class="toolbar"><input class="input" id="posSearch" placeholder="Nome, SKU ou código de barras — leitor USB funciona aqui" autocomplete="off" oninput="renderPosProducts(this.value)" onkeydown="barcodeKey(event)" autofocus><button class="btn secondary" onclick="document.getElementById('posSearch').focus()">Focar leitor</button><button class="btn secondary" onclick="scannerModal()">Escanear código</button></div><div id="posProducts" class="product-grid"></div></div><div class="card cart"><h3 class="section-title">Carrinho</h3><div id="cartLines"></div><div class="field"><span class="label">Cliente</span><select id="saleCustomer" class="input"><option value="">Consumidor não identificado</option>${state.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div><div class="form-grid">${canManage()?`<div class="field"><span class="label">Desconto</span><input id="saleDiscount" class="input" type="number" min="0" step="0.01" value="0" oninput="renderCart()"></div>`:""}<div class="field"><span class="label">Pagamento</span><select id="salePayment" class="input"><option>PIX</option><option>DINHEIRO</option><option>CRÉDITO</option><option>DÉBITO</option><option>TRANSFERÊNCIA</option><option>BOLETO</option><option>OUTRO</option></select></div></div><div class="cart-total-wrap"><div class="cart-total-label">Total da venda</div><div class="cart-total" id="cartTotal">R$ 0,00</div></div>${state.cash?'':'<div class="note mt" style="background:#f8e6e1;color:#7c2a1b;border-color:#f1c9bd">Nenhum caixa aberto. Abra o caixa antes de vender.</div>'}<button class="btn good" style="width:100%;padding:14px" id="finishSaleBtn" ${state.cash?'':'disabled'} onclick="finishSale()">Finalizar venda</button><div class="note mt">PIX e cartões não alteram o dinheiro físico do caixa. Apenas vendas em dinheiro entram na gaveta.</div></div></div>`;
+  renderPosProducts(''); renderCart();
+  document.getElementById('posSearch').focus();
+}
+
+let scannerTarget=null;
+let scannerLastCode=null;
+let scannerLastTime=0;
+let scannerAudio=null;
+let scannerStream=null;
+let scannerRunning=false;
+let scannerTimer=null;
+
+function scannerModal(target='pdv'){
+  scannerTarget=String(target||'pdv');
+  scannerLastCode=null;
+  scannerLastTime=0;
+
+  modal(`
+    <div class="scanner-container">
+
+      <h3>Escanear código de barras</h3>
+
+      <p class="muted">
+        Aponte a câmera traseira para o código de barras.
+      </p>
+
+      <div style="
+        position:relative;
+        background:#000;
+        border-radius:16px;
+        overflow:hidden;
+        margin-top:14px;
+        min-height:260px;
+      ">
+
+        <video
+          id="scannerVideo"
+          autoplay
+          playsinline
+          muted
+          style="
+            display:block;
+            width:100%;
+            height:auto;
+            min-height:260px;
+            max-height:480px;
+            object-fit:cover;
+            background:#000;
+          ">
+        </video>
+
+        <div style="
+          position:absolute;
+          left:8%;
+          right:8%;
+          top:38%;
+          height:24%;
+          border:3px solid #fff;
+          border-radius:10px;
+          box-shadow:0 0 0 9999px rgba(0,0,0,.25);
+          pointer-events:none;
+        "></div>
+
+        <div style="
+          position:absolute;
+          left:12%;
+          right:12%;
+          top:49%;
+          height:2px;
+          background:#fff;
+          opacity:.9;
+          pointer-events:none;
+        "></div>
+
+      </div>
+
+      <div id="scannerVisualFeedback" style="display:none;position:absolute;inset:0;z-index:20;align-items:center;justify-content:center;background:rgba(20,180,90,.92);backdrop-filter:blur(3px);pointer-events:none;">
+  <div style="text-align:center;color:#fff;font-weight:700;padding:20px;">
+    <div id="scannerFeedbackIcon" style="font-size:54px;line-height:1;margin-bottom:10px;">✓</div>
+    <div id="scannerFeedbackTitle" style="font-size:22px;">Código lido</div>
+    <div id="scannerFeedbackCode" style="font-size:15px;margin-top:6px;opacity:.9;"></div>
+  </div>
+</div>
+
+<div id="scannerStatus" class="note mt">
+        Iniciando câmera...
+      </div>
+
+      <div class="actions">
+
+        <button
+          class="btn ghost"
+          type="button"
+          onclick="closeModal()">
+          Cancelar
+        </button>
+
+      </div>
+
+    </div>
+  `);
+
+  startScanner();
+}
+
+async function startScanner(){
+  stopScanner();
+
+  scannerLastCode=null;
+  scannerLastTime=0;
+  scannerRunning=false;
+
+  const video=document.getElementById('scannerVideo');
+  const status=document.getElementById('scannerStatus');
+
+  if(!video) return;
+
+  if(!navigator.mediaDevices?.getUserMedia){
+    if(status) status.textContent='Câmera indisponível neste navegador.';
+    return;
+  }
+
+  if(typeof ZXingBrowser==='undefined'){
+    if(typeof BarcodeDetector==='function'){
+      try{
+        const available=await BarcodeDetector.getSupportedFormats();
+        const formats=['ean_13','ean_8','upc_a','upc_e','code_128','code_39','itf','qr_code'].filter(x=>available.includes(x));
+        if(!formats.length) throw new Error('Nenhum formato de código compatível neste navegador.');
+        const detector=new BarcodeDetector({formats});
+        scannerStream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:'environment'},width:{ideal:640},height:{ideal:480}}});
+        video.srcObject=scannerStream;video.setAttribute('playsinline','');video.muted=true;await video.play();scannerRunning=true;
+        if(status)status.textContent='Aponte a câmera para o código.';
+        const detectFrame=async()=>{if(!scannerRunning)return;try{const codes=await detector.detect(video);if(codes.length){scannerProductFound(codes[0].rawValue);return}}catch(e){}if(scannerRunning)setTimeout(detectFrame,180)};
+        detectFrame();
+        return;
+      }catch(e){if(status)status.textContent=e.message||'Não foi possível iniciar a leitura pela câmera.';return}
+    }
+    if(await loadZXingScanner())return startScanner();
+    if(status) status.textContent='Leitor de código indisponível neste navegador.';
+    return;
+  }
+
+  try{
+    if(status) status.textContent='Preparando leitor...';
+
+    video.setAttribute('autoplay','');
+    video.setAttribute('playsinline','');
+    video.setAttribute('muted','');
+    video.muted=true;
+
+    /*
+      Turbo 3:
+      focado em códigos 1D usados normalmente em produtos.
+      Menos formatos = menos trabalho para o decodificador.
+    */
+    let hints=null;
+
+    try{
+      if(typeof ZXingBrowser.DecodeHintType!=='undefined' &&
+         typeof ZXingBrowser.BarcodeFormat!=='undefined'){
+
+        hints=new Map();
+
+        hints.set(
+          ZXingBrowser.DecodeHintType.POSSIBLE_FORMATS,
+          [
+            ZXingBrowser.BarcodeFormat.EAN_13,
+            ZXingBrowser.BarcodeFormat.EAN_8,
+            ZXingBrowser.BarcodeFormat.UPC_A,
+            ZXingBrowser.BarcodeFormat.UPC_E,
+            ZXingBrowser.BarcodeFormat.CODE_128,
+            ZXingBrowser.BarcodeFormat.CODE_39,
+            ZXingBrowser.BarcodeFormat.ITF
+          ]
+        );
+      }
+    }catch(e){
+      hints=null;
+    }
+
+    /*
+      Intervalo muito baixo entre tentativas.
+      O próprio ZXing reutiliza o leitor interno durante
+      a decodificação contínua.
+    */
+    scannerZXing=new ZXingBrowser.BrowserMultiFormatReader(
+      hints || undefined,
+      80
+    );
+
+    scannerRunning=true;
+
+    scannerZXingControls=await scannerZXing.decodeFromConstraints(
+      {
+        audio:false,
+        video:{
+          facingMode:{ideal:'environment'},
+          width:{ideal:640},
+          height:{ideal:480},
+          frameRate:{ideal:30,max:30}
+        }
+      },
+      video,
+      (result,error)=>{
+        if(!scannerRunning || !result) return;
+
+        const raw=String(result.getText?.()||'').trim();
+
+        if(!raw) return;
+
+        scannerRunning=false;
+
+        scannerProductFound(raw);
+      }
+    );
+
+    const stream=video.srcObject;
+
+    if(stream){
+      scannerStream=stream;
+
+      const track=stream.getVideoTracks?.()[0];
+
+      if(track){
+        const capabilities=track.getCapabilities?.()||{};
+        const advanced=[];
+
+        if(
+          Array.isArray(capabilities.focusMode) &&
+          capabilities.focusMode.includes('continuous')
+        ){
+          advanced.push({
+            focusMode:'continuous'
+          });
+        }
+
+        if(
+          capabilities.zoom &&
+          typeof capabilities.zoom.min==='number' &&
+          typeof capabilities.zoom.max==='number' &&
+          capabilities.zoom.max>capabilities.zoom.min
+        ){
+          const min=capabilities.zoom.min;
+          const max=capabilities.zoom.max;
+
+          advanced.push({
+            zoom:min+(max-min)*0.20
+          });
+        }
+
+        if(advanced.length){
+          await track.applyConstraints({
+            advanced
+          }).catch(()=>{});
+        }
+      }
+    }
+
+    if(status){
+      status.textContent='Pronto — centralize o código na área de leitura.';
+    }
+
+  }catch(err){
+    console.error('Scanner Turbo 3:',err);
+
+    scannerRunning=false;
+    scannerZXingControls=null;
+
+    if(status){
+      status.textContent='Falha ao iniciar o leitor.';
+    }
+  }
+}
+
+function scannerProductFound(raw){
+  const code=String(raw||'').trim();
+
+  if(!code) return;
+
+  const now=Date.now();
+
+  if(scannerLastCode===code && now-scannerLastTime<450){
+    return;
+  }
+
+  scannerLastCode=code;
+  scannerLastTime=now;
+
+  scannerFeedback();
+  scannerVisual('success',code);
+
+  // Cadastro de produto
+  if(scannerTarget==='product'){
+    const product=state.products.find(p=>
+      String(p.barcode||'').trim().toLowerCase()===code.toLowerCase()
+    );
+
+    stopScanner();
+    closeModal();
+
+    if(product){
+      // Código já existe: abre o produto para edição
+      productModal(product.id);
+      toast(`Produto encontrado: ${product.name}`,'ok');
+    }else{
+      // Código novo: abre cadastro já preenchido
+      productModal();
+
+      setTimeout(()=>{
+        const input=document.getElementById('p_barcode');
+
+        if(input){
+          input.value=code;
+          input.focus();
+        }
+      },50);
+
+      toast(`Código ${code} preenchido no novo produto.`,'ok');
+    }
+
+    return;
+  }
+
+  // Estoque
+  const product=state.products.find(p=>
+    p.active &&
+    String(p.barcode||'').trim().toLowerCase()===code.toLowerCase()
+  );
+
+  if(scannerTarget==='stock'){
+    if(product){
+      stopScanner();
+      closeModal();
+      stockInModal(product.id);
+      return;
+    }
+
+    const status=document.getElementById('scannerStatus');
+
+    if(status){
+      status.textContent=`Código ${code} não encontrado no cadastro.`;
+    }
+
+    toast('Esse código ainda não está cadastrado em nenhum produto.','err');
+    return;
+  }
+
+  // PDV
+  if(product){
+    stopScanner();
+    closeModal();
+    addCart(product.id);
+    return;
+  }
+
+  const status=document.getElementById('scannerStatus');
+
+  if(status){
+    status.textContent=`Código ${code} não encontrado no cadastro.`;
+  }
+
+  toast('Produto não encontrado para esse código.','err');
+}
+
+function scannerVisual(type='success',code=''){
+  const box=document.getElementById('scannerVisualFeedback');
+  const icon=document.getElementById('scannerFeedbackIcon');
+  const title=document.getElementById('scannerFeedbackTitle');
+  const codeEl=document.getElementById('scannerFeedbackCode');
+
+  if(!box) return;
+
+  const ok=type!=='error';
+
+  box.style.background=ok?'rgba(20,180,90,.92)':'rgba(210,45,55,.92)';
+  icon.textContent=ok?'✓':'!';
+  title.textContent=ok?'Código lido':'Código não encontrado';
+  codeEl.textContent=code?String(code):'';
+
+  box.style.display='flex';
+
+  box.animate(
+    [
+      {opacity:0,transform:'scale(.96)'},
+      {opacity:1,transform:'scale(1)'}
+    ],
+    {duration:220,easing:'ease-out'}
+  );
+
+  clearTimeout(window.scannerVisualTimer);
+
+  window.scannerVisualTimer=setTimeout(()=>{
+    box.style.display='none';
+  },650);
+}
+
+function scannerFeedback(type='success'){
+  try{
+    const isError=type==='error';
+
+    // Vibração: leitura normal curta / erro mais forte.
+    try{
+      if(navigator.vibrate){
+        navigator.vibrate(
+          isError
+            ? [100,50,100]
+            : [70,35,110]
+        );
+      }
+    }catch(e){}
+
+    /*
+      Feedback sonoro reforçado.
+      Dois tons consecutivos dão uma confirmação
+      mais parecida com leitor de caixa.
+    */
+
+    if(!scannerAudio){
+      scannerAudio=new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+    }
+
+    const ctx=scannerAudio;
+
+    if(ctx.state==='suspended'){
+      ctx.resume().catch(()=>{});
+    }
+
+    const now=ctx.currentTime;
+
+    const master=ctx.createGain();
+
+    master.gain.setValueAtTime(0.0001,now);
+    master.gain.exponentialRampToValueAtTime(
+      isError ? 0.55 : 1.0,
+      now+0.012
+    );
+
+    master.gain.exponentialRampToValueAtTime(
+      0.0001,
+      now+0.24
+    );
+
+    master.connect(ctx.destination);
+
+    if(isError){
+      // Som grave para código/produto não encontrado.
+      const osc=ctx.createOscillator();
+
+      osc.type='square';
+      osc.frequency.setValueAtTime(420,now);
+      osc.frequency.setValueAtTime(300,now+0.11);
+
+      osc.connect(master);
+
+      osc.start(now);
+      osc.stop(now+0.24);
+
+    }else{
+      // Dois tons agudos para leitura confirmada.
+      const osc1=ctx.createOscillator();
+      const osc2=ctx.createOscillator();
+
+      osc1.type='square';
+      osc2.type='square';
+
+      osc1.frequency.setValueAtTime(1350,now);
+      osc2.frequency.setValueAtTime(1750,now+0.085);
+
+      osc1.connect(master);
+      osc2.connect(master);
+
+      osc1.start(now);
+      osc1.stop(now+0.085);
+
+      osc2.start(now+0.085);
+      osc2.stop(now+0.24);
+    }
+
+  }catch(e){
+    console.debug('Feedback sonoro indisponível:',e);
+  }
+}
+
+function stopScanner(){
+  scannerRunning=false;
+
+  try{
+    if(scannerZXingControls){
+      scannerZXingControls.stop();
+    }
+  }catch(e){}
+
+  scannerZXingControls=null;
+  scannerZXing=null;
+
+  if(scannerStream){
+    try{
+      scannerStream.getTracks().forEach(t=>t.stop());
+    }catch(e){}
+    scannerStream=null;
+  }
+
+  const video=document.getElementById('scannerVideo');
+
+  if(video){
+    try{
+      video.pause();
+      video.srcObject=null;
+    }catch(e){}
+  }
+}
+
+function barcodeKey(e){
+  if(e.key!=='Enter') return;
+  const q=(e.target.value||'').trim().toLowerCase();
+  if(!q) return;
+  e.preventDefault();
+  let match=state.products.find(p=>p.active&&String(p.barcode||'').toLowerCase()===q);
+  if(!match) match=state.products.find(p=>p.active&&String(p.sku||'').toLowerCase()===q);
+  if(match){ addCart(match.id); e.target.value=''; renderPosProducts(''); }
+  else{ toast('Produto não encontrado para o código informado.','err'); }
+}
+function renderPosProducts(q=''){
+  q=q.toLowerCase();
+  const ps=state.products.filter(p=>p.active&&[p.name,p.sku,p.barcode].join(' ').toLowerCase().includes(q));
+  document.getElementById('posProducts').innerHTML=ps.map(p=>{
+    const outOfStock=num(p.stock)<=0;
+    return `<button class="product-tile" ${outOfStock?'disabled':''} onclick="addCart(${p.id})"><strong>${esc(p.name)}</strong><small>${esc(p.sku||p.barcode||'Sem código')}<br>${outOfStock?'Sem estoque':'Estoque '+p.stock}</small><div class="price">${fmt.format(p.price)}</div></button>`;
+  }).join('')||'<div class="muted">Nenhum produto encontrado.</div>';
+}
+function addCart(id){
+  const p=state.products.find(x=>x.id===id);
+  if(!p){ toast('Produto não encontrado.','err'); return; }
+  const i=state.cart.find(x=>x.product_id===id);
+  const wantQty=(i?i.qty:0)+1;
+  if(p.stock!==undefined && wantQty>p.stock){ toast(`Estoque insuficiente para ${p.name}. Disponível: ${p.stock}`,'err'); return; }
+  if(i) i.qty++; else state.cart.push({product_id:id,name:p.name,qty:1,unit_price:p.price,stock:p.stock});
+  renderCart();
+}
+function setCartQty(n,val){
+  const item=state.cart[n]; if(!item) return;
+  const q=Number(val);
+  if(!(q>0)){ state.cart.splice(n,1); renderCart(); return; }
+  if(item.stock!==undefined && q>item.stock){ toast(`Estoque insuficiente. Disponível: ${item.stock}`,'err'); renderCart(); return; }
+  item.qty=q; renderCart();
+}
+function renderCart(){
+  const host=document.getElementById('cartLines'); if(!host) return;
+  host.innerHTML=state.cart.map((i,n)=>`<div class="cart-line"><div><b>${esc(i.name)}</b><br><small>${fmt.format(i.unit_price)}</small></div><input class="input" type="number" min="0.001" step="0.001" value="${i.qty}" onchange="setCartQty(${n},this.value)"><div class="right"><b>${fmt.format(i.qty*i.unit_price)}</b></div><button class="btn danger small" onclick="state.cart.splice(${n},1);renderCart()">×</button></div>`).join('')||'<div class="muted">Carrinho vazio.</div>';
+  const sub=state.cart.reduce((s,i)=>s+i.qty*i.unit_price,0);
+  const disc=num(document.getElementById('saleDiscount')?.value);
+  document.getElementById('cartTotal').textContent=fmt.format(Math.max(0,sub-disc));
+}
+async function finishSale(){
+  if(!state.cart.length) return toast('Adicione produtos ao carrinho.','err');
+  if(!state.cash) return toast('Abra o caixa antes de vender.','err');
+  const btn=document.getElementById('finishSaleBtn'); btn.disabled=true;
+  const customer=document.getElementById('saleCustomer').value;
+  const data={customer_id:customer?+customer:null,items:state.cart.map(({product_id,qty})=>({product_id,qty})),discount:num(document.getElementById('saleDiscount')?.value),payment_method:document.getElementById('salePayment').value};
+  try{
+    const r=await api('/api/sales',{method:'POST',body:JSON.stringify(data)});
+    toast(`Venda #${r.sale_id} concluída — total ${fmt.format(r.total)}`);
+    await refreshCash();
+    page_pdv();
+  }catch(err){ toast(err.message,'err'); btn.disabled=false; }
+}
+
+/* ---------- compras ---------- */
+async function page_purchases(){
+  const [pu]=await Promise.all([api('/api/purchases'),loadProducts(),loadSuppliers()]);
+  document.getElementById('view').innerHTML=`<div class="toolbar">${canManage()?`<button class="btn" onclick="purchaseModal()">+ Registrar compra</button>`:''}</div><div class="card">${table(['#','Fornecedor','Documento','Pagamento','Total','Responsável','Data'],pu.map(x=>`<tr><td>${x.id}</td><td>${esc(x.supplier)}</td><td>${esc(x.invoice_ref||'')}</td><td>${esc(x.payment_method||'PIX')}</td><td><b>${fmt.format(x.total)}</b></td><td>${esc(x.user_name)}</td><td>${esc(x.created_at)}</td></tr>`))}</div>`;
+}
+async function loadSuppliers(){state.suppliers=await api('/api/suppliers')}
+function purchaseModal(){
+  window._purchase=[];
+  modal(`<h3>Registrar compra / entrada</h3><div class="form-grid"><div class="field"><span class="label">Fornecedor</span><select id="pu_supplier" class="input"><option value="">Sem fornecedor</option>${state.suppliers.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</select></div><div class="field"><span class="label">NF / referência</span><input id="pu_ref" class="input"></div><div class="field"><span class="label">Pagamento</span><select id="pu_payment" class="input"><option>PIX</option><option>DINHEIRO</option><option>CRÉDITO</option><option>DÉBITO</option><option>TRANSFERÊNCIA</option><option>BOLETO</option><option>OUTRO</option></select></div></div><div class="card mt"><div class="form-grid"><div class="field"><span class="label">Produto</span><select id="pu_product" class="input">${state.products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select></div><div class="field"><span class="label">Quantidade</span><input id="pu_qty" type="number" step="0.001" class="input" value="1"></div><div class="field"><span class="label">Custo unitário</span><input id="pu_cost" type="number" step="0.01" class="input" value="0"></div><div class="field" style="align-self:end"><button class="btn secondary" type="button" onclick="addPurchaseItem()">Adicionar item</button></div></div><div id="pu_items"></div></div><div class="actions"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" onclick="savePurchase()">Salvar compra</button></div>`);
+  renderPurchaseItems();
+}
+function addPurchaseItem(){
+  const pid=+formVal('pu_product'),p=state.products.find(x=>x.id===pid),qty=num(formVal('pu_qty')),cost=num(formVal('pu_cost'));
+  if(!qty||qty<=0) return toast('Quantidade inválida.','err');
+  window._purchase.push({product_id:pid,name:p.name,qty,unit_cost:cost});
+  renderPurchaseItems();
+}
+function renderPurchaseItems(){document.getElementById('pu_items').innerHTML=table(['Produto','Qtd.','Custo','Total',''],(window._purchase||[]).map((i,n)=>`<tr><td>${esc(i.name)}</td><td>${i.qty}</td><td>${fmt.format(i.unit_cost)}</td><td>${fmt.format(i.qty*i.unit_cost)}</td><td><button class="btn danger small" onclick="_purchase.splice(${n},1);renderPurchaseItems()">×</button></td></tr>`))}
+async function savePurchase(){
+  if(!window._purchase?.length) return toast('Adicione ao menos um item.','err');
+  try{
+    const s=formVal('pu_supplier');
+    const r=await api('/api/purchases',{method:'POST',body:JSON.stringify({supplier_id:s?+s:null,invoice_ref:formVal('pu_ref'),payment_method:formVal('pu_payment'),items:window._purchase.map(({product_id,qty,unit_cost})=>({product_id,qty,unit_cost}))})});
+    closeModal(); toast('Compra registrada: '+fmt.format(r.total)); page_purchases();
+  }catch(err){ toast(err.message,'err'); }
+}
+
+/* ---------- vendas (lista, detalhe, cancelamento) ---------- */
+async function page_sales(){
+  const sales=await api('/api/sales');
+  state.sales=sales;
+  document.getElementById('view').innerHTML=`<div class="toolbar"><input class="input" placeholder="Buscar por cliente ou forma de pagamento..." oninput="filterSales(this.value)"><span class="spacer"></span><button class="btn secondary" onclick="download('/api/export/sales')">Exportar CSV</button></div><div class="card" id="salesTable">${renderSales(sales)}</div>`;
+}
+function saleStatusBadge(s){const v=String(s||'').toLowerCase();if(v==='cancelled'||v==='cancelada'||v==='cancelado')return '<span class="badge danger">Cancelada</span>';return '<span class="badge good">Concluída</span>';}
+function renderSales(list){return table(['#','Cliente','Pagamento','Desconto','Total','Status','Usuário','Data',''],list.map(x=>`<tr><td>${x.id}</td><td>${esc(x.customer||'Consumidor não identificado')}</td><td>${esc(x.payment_method)}</td><td>${fmt.format(x.discount||0)}</td><td><b>${fmt.format(x.total)}</b></td><td>${saleStatusBadge(x.status)}</td><td>${esc(x.user_name||'')}</td><td>${esc(x.created_at)}</td><td><button class="btn small secondary" onclick="saleDetail(${x.id})">Detalhes</button></td></tr>`))}
+function filterSales(q){q=q.toLowerCase();document.getElementById('salesTable').innerHTML=renderSales((state.sales||[]).filter(x=>[x.customer,x.payment_method].join(' ').toLowerCase().includes(q)))}
+async function saleDetail(id){
+  try{
+    const r=await api('/api/sales/'+id);
+    const sale=r.sale, items=r.items||[];
+    const cancelled=String(sale.status||'').toLowerCase().startsWith('cancel');
+    modal(`<h3>Venda #${sale.id}</h3><div class="meta-row"><span class="meta-chip">${esc(sale.created_at)}</span><span class="meta-chip">${esc(sale.customer||'Consumidor não identificado')}</span><span class="meta-chip">${esc(sale.payment_method)}</span>${saleStatusBadge(sale.status)}</div>${table(['Produto','Qtd.','Preço','Total'],items.map(i=>`<tr><td>${esc(i.product||('Produto #'+i.product_id))}</td><td>${i.qty}</td><td>${fmt.format(i.unit_price)}</td><td>${fmt.format(i.total??(i.qty*i.unit_price))}</td></tr>`))}<div class="cart-total-wrap right"><div class="muted">Desconto: ${fmt.format(sale.discount||0)}</div><div class="cart-total" style="font-size:24px">${fmt.format(sale.total)}</div></div>${cancelled?'<p class="danger-text mt">Esta venda foi cancelada.</p>':''}<div class="actions">${(!cancelled&&canCancelSale())?`<button class="btn danger" onclick="cancelSaleConfirm(${sale.id})">Cancelar venda</button>`:''}<button class="btn ghost" onclick="closeModal()">Fechar</button></div>`);
+  }catch(err){ toast(err.message,'err'); }
+}
+function cancelSaleConfirm(id){
+  confirmModal('Cancelar venda',`Tem certeza que deseja cancelar a venda #${id}? O estoque dos itens será restaurado.`,async()=>{
+    try{
+      const r=await api('/api/sales/'+id+'/cancel',{method:'POST'});
+      closeModal(); toast(r.message||'Venda cancelada'); await refreshCash();
+      if(document.getElementById('pageTitle').textContent===title('sales')) page_sales(); else page_dashboard().catch(()=>{});
+    }catch(err){ closeModal(); toast(err.message,'err'); }
+  },'Cancelar venda');
+}
+
+/* ---------- caixa ---------- */
+async function page_cash(){
+  await refreshCash();
+  const mv=await api('/api/cash/movements');
+  document.getElementById('view').innerHTML=`<div class="cards"><div class="card metric"><div class="k">Status</div><div class="v">${state.cash?'<span class="kpi-good">Aberto</span>':'<span class="kpi-danger">Fechado</span>'}</div></div><div class="card metric"><div class="k">Dinheiro esperado no caixa</div><div class="v">${fmt.format(state.cash?.expected_amount||0)}</div></div><div class="card metric"><div class="k">Abertura</div><div class="v">${fmt.format(state.cash?.opening_amount||0)}</div></div><div class="card metric"><div class="k">Aberto em</div><div class="v" style="font-size:16px">${esc(state.cash?.opened_at||'—')}</div></div></div>
+  <div class="toolbar mt">${state.cash?`<button class="btn secondary" onclick="cashMoveModal('suprimento')">+ Suprimento</button><button class="btn secondary" onclick="cashMoveModal('sangria')">− Sangria</button><button class="btn secondary" onclick="cashMoveModal('entrada')">+ Entrada</button><button class="btn secondary" onclick="cashMoveModal('saida')">− Saída</button><button class="btn danger" onclick="cashCloseModal()">Fechar caixa</button>`:`<button class="btn good" onclick="cashOpenModal()">Abrir caixa</button>`}</div>
+  ${state.cash?'':'<div class="note mt">Nenhum caixa está aberto no momento. Abra o caixa para registrar vendas em dinheiro e movimentações.</div>'}
+  <div class="card mt"><h3 class="section-title">Movimentações</h3>${table(['Data','Tipo','Descrição','Valor','Usuário'],mv.map(x=>`<tr><td>${esc(x.created_at)}</td><td>${esc(x.type)}</td><td>${esc(x.description||'')}</td><td>${fmt.format(x.amount)}</td><td>${esc(x.user_name)}</td></tr>`))}</div>`;
+}
+function cashOpenModal(){modal(`<h3>Abrir caixa</h3><div class="field"><span class="label">Fundo inicial</span><input id="cash_amount" class="input" type="number" step="0.01" value="0" autofocus></div><div class="actions"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn good" onclick="doCashOpen()">Abrir</button></div>`)}
+async function doCashOpen(){try{await api('/api/cash/open',{method:'POST',body:JSON.stringify({opening_amount:num(formVal('cash_amount'))})});closeModal();toast('Caixa aberto');page_cash();}catch(e){toast(e.message,'err');}}
+function cashCloseModal(){
+  const expected=state.cash?.expected_amount||0;
+  modal(`<h3>Fechar caixa</h3><div class="grid2"><div><p class="muted">Valor esperado</p><p style="font-size:22px;font-weight:800">${fmt.format(expected)}</p></div><div><p class="muted">Diferença</p><p id="cashDiff" style="font-size:22px;font-weight:800">${fmt.format(0)}</p></div></div><div class="field mt"><span class="label">Valor contado no caixa</span><input id="cash_close_amount" class="input" type="number" step="0.01" value="${expected}" oninput="updateCashDiff(${expected})" autofocus></div><div class="actions"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn danger" onclick="doCashClose()">Fechar caixa</button></div>`);
+}
+function updateCashDiff(expected){const counted=num(formVal('cash_close_amount'));const diff=counted-expected;const el=document.getElementById('cashDiff');el.textContent=fmt.format(diff);el.className=diff<0?'kpi-danger':'kpi-good';}
+async function doCashClose(){try{await api('/api/cash/close',{method:'POST',body:JSON.stringify({closing_amount:num(formVal('cash_close_amount'))})});closeModal();toast('Caixa fechado');page_cash();}catch(e){toast(e.message,'err');}}
+function cashMoveModal(type){
+  const labels={suprimento:'Suprimento',sangria:'Sangria',entrada:'Entrada de caixa',saida:'Saída de caixa'};
+  modal(`<h3>${labels[type]||type}</h3><div class="field"><span class="label">Valor</span><input id="cm_amount" class="input" type="number" step="0.01" min="0.01" required autofocus></div><div class="field"><span class="label">Descrição</span><input id="cm_desc" class="input"></div><div class="actions"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" onclick="doCashMove('${type}')">Registrar</button></div>`);
+}
+async function doCashMove(type){
+  const amount=num(formVal('cm_amount'));
+  if(!(amount>0)) return toast('Informe um valor válido.','err');
+  try{ await api('/api/cash/move',{method:'POST',body:JSON.stringify({type,amount,description:formVal('cm_desc')})}); closeModal(); toast('Movimentação registrada'); page_cash(); }
+  catch(e){ toast(e.message,'err'); }
+}
+
+/* ---------- despesas ---------- */
+async function page_expenses(){
+  const ex=await api('/api/expenses');
+  document.getElementById('view').innerHTML=`<div class="toolbar"><button class="btn" onclick="expenseModal()">+ Nova despesa</button><span class="spacer"></span><button class="btn secondary" onclick="download('/api/export/expenses')">Exportar CSV</button></div><div class="card">${table(['Data','Descrição','Categoria','Pagamento','Valor','Usuário'],ex.map(x=>`<tr><td>${esc(x.created_at)}</td><td><b>${esc(x.description)}</b></td><td>${esc(x.category||'')}</td><td>${esc(x.payment_method||'')}</td><td>${fmt.format(x.amount)}</td><td>${esc(x.user_name)}</td></tr>`))}</div>`;
+}
+function expenseModal(){
+  modal(`<h3>Nova despesa</h3><form id="exForm"><div class="form-grid"><div class="field full"><span class="label">Descrição *</span><input id="ex_desc" class="input" required></div><div class="field"><span class="label">Categoria</span><input id="ex_cat" class="input" placeholder="Ex.: energia, aluguel"></div><div class="field"><span class="label">Valor</span><input id="ex_amount" class="input" type="number" step="0.01" required></div><div class="field"><span class="label">Pagamento</span><select id="ex_pay" class="input"><option>PIX</option><option>DINHEIRO</option><option>CRÉDITO</option><option>DÉBITO</option><option>BOLETO</option><option>OUTRO</option></select></div></div><div class="actions"><button type="button" class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn">Salvar</button></div></form>`);
+  document.getElementById('exForm').onsubmit=async e=>{
+    e.preventDefault();
+    try{ await api('/api/expenses',{method:'POST',body:JSON.stringify({description:formVal('ex_desc'),category:formVal('ex_cat'),amount:num(formVal('ex_amount')),payment_method:formVal('ex_pay')})}); closeModal(); toast('Despesa registrada'); page_expenses(); }
+    catch(err){ toast(err.message,'err'); }
+  };
+}
+
+/* ---------- relatórios ---------- */
+async function page_reports(){
+  const today=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10), first=today.slice(0,8)+'01';
+  document.getElementById('view').innerHTML=`<div class="toolbar"><select id="rep_range" class="input" onchange="setReportRange(this.value)"><option value="custom">Per?odo personalizado</option><option value="today">Hoje</option><option value="7">7 dias</option><option value="30">30 dias</option></select><div class="field"><span class="label">De</span><input id="rep_start" class="input" type="date" value="${first}"></div><div class="field"><span class="label">Até</span><input id="rep_end" class="input" type="date" value="${today}"></div><button class="btn" onclick="loadReport()">Atualizar</button></div><div id="reportHost"></div>`;
+  loadReport();
+}
+function setReportRange(range){
+  if(range==='custom'){document.getElementById('rep_start').focus();return;}
+  const end=new Date(), days=range==='today'?0:Number(range)-1;end.setHours(12,0,0,0);
+  const start=new Date(end);start.setDate(start.getDate()-days);
+  const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+  document.getElementById('rep_start').value=iso(start);document.getElementById('rep_end').value=iso(end);loadReport();
+}
+async function loadReport(){
+  const d=await api(`/api/reports/summary?start=${formVal('rep_start')}&end=${formVal('rep_end')}`);
+  document.getElementById('reportHost').innerHTML=`<div class="cards"><div class="card metric"><div class="k">Faturamento</div><div class="v">${fmt.format(d.revenue)}</div><div class="s">${d.sales_count} venda(s)</div></div><div class="card metric"><div class="k">Descontos</div><div class="v">${fmt.format(d.discounts||0)}</div></div><div class="card metric"><div class="k">Custo estimado</div><div class="v">${fmt.format(d.estimated_cogs)}</div></div>${state.user.segment==='RESTAURANTE'?'':`<div class="card metric"><div class="k">Despesas</div><div class="v">${fmt.format(d.expenses)}</div></div>`}<div class="card metric"><div class="k">Resultado estimado</div><div class="v ${d.estimated_profit>=0?'kpi-good':'kpi-danger'}">${fmt.format(d.estimated_profit)}</div></div></div><div class="grid2"><div class="card"><h3 class="section-title">Formas de pagamento</h3>${table(['Forma','Vendas','Total'],d.payment_methods.map(x=>`<tr><td>${esc(x.payment_method)}</td><td>${x.count}</td><td>${fmt.format(x.total)}</td></tr>`))}</div><div class="card"><h3 class="section-title">Produtos com maior receita</h3>${table(['Produto','Qtd.','Receita'],d.top_products.map(x=>`<tr><td>${esc(x.name)}</td><td>${num(x.qty).toFixed(2)}</td><td>${fmt.format(x.revenue)}</td></tr>`))}</div></div><div class="card mt"><h3 class="section-title">Vendas por dia</h3>${table(['Data','Vendas','Total'],d.daily.map(x=>`<tr><td>${esc(x.day)}</td><td>${x.count}</td><td>${fmt.format(x.total)}</td></tr>`))}</div>`;
+}
+
+/* ---------- usuários (somente admin) ---------- */
+async function page_users(){
+  const us=await api('/api/users'); state.users=us;
+  document.getElementById('view').innerHTML=`<div class="toolbar"><button class="btn" onclick="userModal()">+ Novo usuário</button><button class="btn secondary" onclick="passwordModal()">Trocar minha senha</button></div><div class="card">${renderUsers(us)}</div>`;
+}
+function renderUsers(us){
+  return table(['Nome','Usuário','Perfil','Status','Criado em','Ações'],us.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.username)}</td><td>${roleLabel(x.role)}</td><td>${x.active?'<span class="badge good">Ativo</span>':'<span class="badge">Inativo</span>'}</td><td>${esc(x.created_at)}</td><td><div class="row-actions"><button class="btn small secondary" onclick="userModal(${x.id})">Editar</button><button class="btn small ${x.active?'danger':'good'}" onclick="toggleUserActive(${x.id},${x.active?'false':'true'})">${x.active?'Desativar':'Ativar'}</button></div></td></tr>`));
+}
+function userModal(id){
+  const u=id?state.users.find(x=>x.id===id):null;
+  modal(`<h3>${id?'Editar':'Novo'} usuário</h3><form id="uForm"><div class="form-grid">
+  <div class="field"><span class="label">Nome</span><input id="u_name" class="input" value="${esc(u?.name||'')}" required></div>
+  <div class="field"><span class="label">Usuário</span><input id="u_user" class="input" value="${esc(u?.username||'')}" required></div>
+  <div class="field"><span class="label">${id?'Nova senha (opcional)':'Senha'}</span><input id="u_pass" class="input" type="password" ${id?'':'required'}></div>
+  <div class="field"><span class="label">Perfil</span><select id="u_role" class="input">
+    <option value="vendedor" ${u?.role==='vendedor'?'selected':''}>Vendedor</option>
+    <option value="caixa" ${u?.role==='caixa'?'selected':''}>Caixa</option>
+    <option value="atendente" ${u?.role==='atendente'?'selected':''}>Atendente</option>
+    <option value="cozinha" ${u?.role==='cozinha'?'selected':''}>Cozinha</option>
+    <option value="gerente" ${u?.role==='gerente'?'selected':''}>Gerente</option>
+    <option value="admin" ${u?.role==='admin'?'selected':''}>Administrador</option>
+  </select></div></div><div class="actions"><button type="button" class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn">Salvar</button></div></form>`);
+  document.getElementById('uForm').onsubmit=async e=>{
+    e.preventDefault();
+    const data={name:formVal('u_name'),username:formVal('u_user'),role:formVal('u_role'),active:id?!!u?.active:true};
+    const pass=formVal('u_pass'); if(pass) data.password=pass;
+    try{ await api(id?'/api/users/'+id:'/api/users',{method:id?'PUT':'POST',body:JSON.stringify(data)}); closeModal(); toast('Usuário salvo'); page_users(); }
+    catch(err){ toast(err.message,'err'); }
+  };
+}
+function toggleUserActive(id,active){
+  const u=state.users.find(x=>x.id===id);
+  confirmModal(active?'Ativar usuário':'Desativar usuário',`Tem certeza que deseja ${active?'ativar':'desativar'} o usuário <b>${esc(u?.name||'')}</b>?`,async()=>{
+    await api('/api/users/'+id,{method:'PUT',body:JSON.stringify({name:u.name,username:u.username,role:u.role,active})}); closeModal(); toast('Usuário atualizado'); page_users();
+  },active?'Ativar':'Desativar',!active);
+}
+function passwordModal(){
+  modal(`<h3>Trocar minha senha</h3><div class="field"><span class="label">Senha atual</span><input id="pw_old" class="input" type="password"></div><div class="field"><span class="label">Nova senha</span><input id="pw_new" class="input" type="password"></div><div class="actions"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" onclick="changePassword()">Alterar</button></div>`);
+}
+async function changePassword(){
+  try{
+    await api('/api/change-password',{method:'POST',body:JSON.stringify({current_password:formVal('pw_old'),new_password:formVal('pw_new')})});
+    closeModal();
+    toast('Senha alterada. Faça login novamente.');
+    state.user=null;
+    showLogin();
+  }catch(e){ toast(e.message,'err'); }
+}
+
+/* ---------- configurações e auditoria (admin) ---------- */
+async function page_settings(){
+  const s=await api('/api/settings');
+  document.getElementById('view').innerHTML=`<div class="card"><h3 class="section-title">Dados da loja</h3><form id="setForm"><div class="form-grid"><div class="field"><span class="label">Nome da loja</span><input id="set_name" class="input" value="${esc(s.store_name||'')}"></div><div class="field"><span class="label">CNPJ/CPF</span><input id="set_doc" class="input" value="${esc(s.store_document||'')}"></div><div class="field"><span class="label">Telefone</span><input id="set_phone" class="input" value="${esc(s.store_phone||'')}"></div><div class="field full"><span class="label">Endereço</span><input id="set_addr" class="input" value="${esc(s.store_address||'')}"></div></div><div class="actions"><button class="btn">Salvar configurações</button></div></form></div><div class="card mt"><h3 class="section-title">Backup</h3><p class="muted">O banco de dados fica no arquivo <b>loja.db</b>. Copie esse arquivo regularmente para um local seguro.</p></div>`;
+  document.getElementById('setForm').onsubmit=async e=>{
+    e.preventDefault();
+    try{ await api('/api/settings',{method:'PUT',body:JSON.stringify({store_name:formVal('set_name'),store_document:formVal('set_doc'),store_phone:formVal('set_phone'),store_address:formVal('set_addr')})}); document.getElementById('brand').textContent=formVal('set_name'); toast('Configurações salvas'); }
+    catch(err){ toast(err.message,'err'); }
+  };
+}
+async function page_audit(){
+  const a=await api('/api/audit');
+  document.getElementById('view').innerHTML=`<div class="card">${table(['Data','Usuário','Ação','Entidade','ID','Detalhes'],a.map(x=>`<tr><td>${esc(x.created_at)}</td><td>${esc(x.user_name)}</td><td>${esc(x.action)}</td><td>${esc(x.entity||'')}</td><td>${x.entity_id??''}</td><td>${esc(x.details||'')}</td></tr>`))}</div>`;
+}
+
+/* ---------- mesas, comandas e cozinha ---------- */
+async function page_tables(){
+  state.restaurantTabId=null;
+  const [ts,requests]=await Promise.all([api('/api/restaurant/tables'),api('/api/restaurant/requests'),loadProducts(),loadCustomers()]);
+  const canCreate=canManage();
+  document.getElementById('view').innerHTML=`${requests.length?`<section class="card mb"><h3 class="section-title">Solicitações das mesas</h3>${requests.map(r=>`<div class="toolbar" style="justify-content:space-between;border-bottom:1px solid var(--line);padding:9px 0"><span><b>Mesa ${esc(r.table_name)}</b> ${r.kind==='WAITER'?'chamou o garçom':'pediu a conta'} · ${esc(r.created_at)}</span><button class="btn small secondary" onclick="resolveTableRequest(${r.id})">Marcar atendido</button></div>`).join('')}</section>`:''}<div class="toolbar"><span class="muted">Abra a mesa para lançar itens ou gere o QR para autoatendimento.</span><span class="spacer"></span>${canCreate?'<button class="btn" onclick="tableCreateModal()">Nova mesa</button>':''}<button class="btn secondary" onclick="page_tables()">Atualizar</button></div><div class="grid3">${ts.map(t=>`<article class="card" style="border-left:4px solid ${t.status==='LIVRE'?'var(--till)':t.status==='OCUPADA'?'var(--amber)':'var(--brick)'}"><button class="table-open" style="text-align:left;width:100%;border:0;background:none;padding:0;color:inherit" onclick="${t.tab_id?`showTab(${t.tab_id})`:`openTable(${t.id})`}"><strong style="font-size:18px">${esc(t.name)}</strong><div class="mt"><span class="badge ${t.status==='LIVRE'?'good':t.status==='OCUPADA'?'warn':'danger'}">${esc(t.status)}</span></div>${t.tab_id?`<div class="muted mt">Comanda ${t.tab_number} · ${t.item_count} item(ns)</div><div class="price">${fmt.format(t.total)}</div>`:'<div class="muted mt">Disponível</div>'}</button>${canCreate?`<div class="actions mt"><button class="btn small secondary" onclick="tableQr(${t.id})">QR Code</button></div>`:''}</article>`).join('')}</div>`;
+}
+
+let scannerLibraryPromise=null;
+function loadZXingScanner(){
+  if(typeof ZXingBrowser!=='undefined')return Promise.resolve(true);
+  if(!scannerLibraryPromise)scannerLibraryPromise=new Promise(resolve=>{const script=document.createElement('script');script.src='https://unpkg.com/@zxing/browser@0.2.1';script.onload=()=>resolve(typeof ZXingBrowser!=='undefined');script.onerror=()=>resolve(false);document.head.appendChild(script)});
+  return scannerLibraryPromise;
+}
+async function resolveTableRequest(id){try{await api(`/api/restaurant/requests/${id}/resolve`,{method:'POST'});page_tables()}catch(e){toast(e.message,'err')}}
+async function tableQr(id,regenerate=false){try{const q=await api(`/api/restaurant/tables/${id}/qr`,{method:'POST',body:JSON.stringify({regenerate})});window._tableQrData={id,name:q.table_name,url:q.url};modal(`<div id="qr-print"><h3>QR Code · ${esc(q.table_name)}</h3><p class="muted">Coloque este código na mesa para abrir o cardápio e enviar pedidos.</p><img alt="QR Code ${esc(q.table_name)}" style="display:block;width:min(280px,70vw);height:auto;margin:16px auto" src="/api/restaurant/tables/${id}/qr.png"><p style="overflow-wrap:anywhere;text-align:center"><a target="_blank" rel="noopener" href="${esc(q.url)}">${esc(q.url)}</a></p></div><div class="actions"><button class="btn ghost" onclick="closeModal()">Fechar</button><button class="btn secondary" onclick="tableQr(${id},true)">Gerar outro</button><button class="btn" onclick="printTableQr()">Imprimir</button></div>`)}catch(e){toast(e.message,'err')}}
+function printTableQr(){const {id,name,url}=window._tableQrData||{};if(!id)return;const w=window.open('','_blank','width=600,height=720');if(!w){toast('Permita a janela de impressão para continuar.','err');return}const d=w.document;d.title=`QR Code - ${name}`;const h=d.createElement('h1'),img=d.createElement('img'),p=d.createElement('p'),link=d.createElement('p');h.textContent=name;img.src=`/api/restaurant/tables/${id}/qr.png`;img.alt=`QR Code da ${name}`;img.style.width='320px';p.textContent='Escaneie para ver o cardápio e pedir';link.textContent=url;link.style.overflowWrap='anywhere';d.body.append(h,img,p,link);img.onload=()=>w.print();img.onerror=()=>toast('Não foi possível carregar o QR Code para impressão.','err')}
+function tableCreateModal(){modal(`<h3>Nova mesa</h3><div class="field"><span class="label">Nome ou número</span><input class="input" id="table_name" placeholder="Ex.: Mesa 1" autofocus></div><div class="actions"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" onclick="tableCreate()">Salvar mesa</button></div>`);}
+async function tableCreate(){try{await api('/api/restaurant/tables',{method:'POST',body:JSON.stringify({name:formVal('table_name')})});closeModal();page_tables()}catch(e){toast(e.message,'err')}}
+async function openTable(id){try{const r=await api(`/api/restaurant/tables/${id}/open`,{method:'POST',body:JSON.stringify({})});await showTab(r.id)}catch(e){toast(e.message,'err')}}
+async function showTab(id){
+  state.restaurantTabId=id;
+  try{
+    const [t,products,tables]=await Promise.all([api(`/api/restaurant/tabs/${id}`),loadProducts(),api('/api/restaurant/tables')]);
+    const canEdit=canManage();
+    const items=t.items.map(i=>`<tr><td><b>${esc(i.product_name)}</b>${i.notes?`<div class="muted">${esc(i.notes)}</div>`:''}</td><td>${num(i.qty)}</td><td>${fmt.format(i.unit_price)}</td><td>${fmt.format(i.qty*i.unit_price)}</td><td>${canEdit?`<div class="row-actions"><button class="btn small secondary" onclick="tabQty(${i.id},${i.qty},'${esc(i.notes)}')">Qtd.</button><button class="btn small danger" onclick="tabRemove(${i.id},${id})">Remover</button></div>`:''}</td></tr>`);
+    const destinations=tables.filter(x=>x.id!==t.table_id&&x.status==='LIVRE');window._transferTables=destinations.map(x=>({id:x.id,name:x.name}));
+    document.getElementById('view').innerHTML=`<div class="toolbar"><button class="btn secondary" onclick="page_tables()">Voltar às mesas</button><span class="badge warn">${esc(t.table_name)} · Comanda ${t.number}</span><span class="spacer"></span>${canEdit&&destinations.length?`<button class="btn secondary" onclick="tabTransferModal(${id})">Transferir mesa</button>`:''}<button class="btn secondary" onclick="tabPaying(${id})">Aguardar pagamento</button><button class="btn good" onclick="tabCloseModal(${id},${t.customer_id||''})">Fechar e receber</button></div>
+      <div class="pos"><div class="card"><h3 class="section-title">Itens da comanda</h3>${table(['Produto','Qtd.','Unitário','Subtotal',''],items)}<div class="cart-total-wrap"><div class="cart-total-label">Total calculado no servidor</div><div class="cart-total">${fmt.format(t.subtotal)}</div></div><div class="field"><span class="label">Observação da comanda</span><input class="input" id="tab_memo" maxlength="1000" value="${esc(t.notes||'')}" placeholder="Preferências ou instruções gerais"></div><button class="btn small secondary" onclick="tabNotesSave(${id})">Salvar observação</button><h3 class="section-title mt">Adicionar pedido</h3><div class="form-grid"><div class="field full"><span class="label">Produto</span><select class="input" id="tab_product">${products.filter(p=>p.active).map(p=>`<option value="${p.id}">${esc(p.name)} · ${fmt.format(p.price)}</option>`).join('')}</select></div><div class="field"><span class="label">Quantidade</span><input class="input" id="tab_qty" type="number" min="0.01" step="0.01" value="1"></div><div class="field"><span class="label">Observação do preparo</span><input class="input" id="tab_notes" maxlength="500" placeholder="Sem cebola, ponto da carne..."></div></div><div class="actions"><button class="btn" onclick="tabAdd(${id})">Enviar para cozinha</button></div></div>
+      <div class="card"><h3 class="section-title">Pedidos da cozinha</h3>${table(['Pedido','Origem','Status','Enviado por','Horário'],t.orders.map(o=>`<tr><td>#${o.id}</td><td>${o.source==='QR'?'QR Code':'Atendente'}</td><td><span class="badge ${o.status==='PRONTO'?'good':'warn'}">${esc(o.status)}</span></td><td>${esc(o.user_name)}</td><td>${esc(o.created_at)}</td></tr>`))}<p class="note mt">Cada item enviado gera um pedido rastreável na tela da cozinha.</p></div></div>`;
+  }catch(e){toast(e.message,'err')}
+}
+async function tabAdd(id){try{await api(`/api/restaurant/tabs/${id}/items`,{method:'POST',body:JSON.stringify({product_id:num(formVal('tab_product')),qty:num(formVal('tab_qty')),notes:formVal('tab_notes')||''})});toast('Pedido enviado para a cozinha');showTab(id)}catch(e){toast(e.message,'err')}}
+async function tabNotesSave(id){try{await api(`/api/restaurant/tabs/${id}`,{method:'PATCH',body:JSON.stringify({notes:formVal('tab_memo')||''})});toast('Observação salva')}catch(e){toast(e.message,'err')}}
+function tabQty(itemId,qty,notes){modal(`<h3>Alterar item</h3><div class="field"><span class="label">Quantidade</span><input class="input" type="number" id="item_qty" min="0.01" step="0.01" value="${qty}"></div><div class="field"><span class="label">Observação</span><input class="input" id="item_notes" value="${notes}" maxlength="500"></div><div class="actions"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" onclick="tabSaveQty(${itemId})">Salvar</button></div>`)}
+async function tabSaveQty(id){try{await api(`/api/restaurant/items/${id}`,{method:'PATCH',body:JSON.stringify({qty:num(formVal('item_qty')),notes:formVal('item_notes')||''})});closeModal();page_tables()}catch(e){toast(e.message,'err')}}
+function tabRemove(itemId,tabId){confirmModal('Remover item','O item será removido da comanda e do pedido da cozinha.',async()=>{await api(`/api/restaurant/items/${itemId}`,{method:'DELETE'});closeModal();showTab(tabId)},'Remover',true)}
+function tabTransferModal(tabId){const items=window._transferTables||[];modal(`<h3>Transferir comanda</h3><div class="field"><span class="label">Mesa disponível</span><select class="input" id="transfer_table">${items.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('')}</select></div><div class="actions"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn" onclick="tabTransfer(${tabId})">Transferir</button></div>`)}
+async function tabTransfer(id){try{await api(`/api/restaurant/tabs/${id}/transfer`,{method:'POST',body:JSON.stringify({table_id:num(formVal('transfer_table'))})});closeModal();page_tables()}catch(e){toast(e.message,'err')}}
+async function tabPaying(id){try{await api(`/api/restaurant/tabs/${id}/paying`,{method:'POST'});toast('Mesa marcada para pagamento');page_tables()}catch(e){toast(e.message,'err')}}
+function tabCloseModal(id,customerId){modal(`<h3>Fechar comanda</h3><p class="muted">O total será calculado pelo servidor. Venda, estoque e caixa serão atualizados em uma única transação.</p><div class="field"><span class="label">Forma de pagamento</span><select class="input" id="tab_payment"><option>DINHEIRO</option><option>PIX</option><option>CRÉDITO</option><option>DÉBITO</option><option>OUTRO</option></select></div><div class="field"><span class="label">Cliente (opcional)</span><select class="input" id="tab_customer"><option value="">Consumidor</option>${state.customers.map(c=>`<option value="${c.id}" ${String(c.id)===String(customerId)?'selected':''}>${esc(c.name)}</option>`).join('')}</select></div><div class="actions"><button class="btn ghost" onclick="closeModal()">Cancelar</button><button class="btn good" onclick="tabClose(${id})">Confirmar pagamento</button></div>`)}
+async function tabClose(id){try{const customer=num(formVal('tab_customer'))||null;const r=await api(`/api/restaurant/tabs/${id}/close`,{method:'POST',body:JSON.stringify({payment_method:formVal('tab_payment'),customer_id:customer})});closeModal();toast(`Venda #${r.sale_id} concluída · ${fmt.format(r.total)}`);await refreshCash();page_tables()}catch(e){toast(e.message,'err')}}
+async function page_kitchen(){
+  const orders=await api('/api/restaurant/orders');
+  document.getElementById('view').innerHTML=`<div class="toolbar"><span class="muted">Pedidos ativos por horário de entrada, incluindo a origem QR Code.</span><span class="spacer"></span><button class="btn secondary" onclick="page_kitchen()">Atualizar</button></div><div class="grid3">${orders.map(o=>`<article class="card"><div class="toolbar"><strong>Pedido #${o.id}</strong><span class="badge ${o.status==='PRONTO'?'good':'warn'}">${esc(o.status)}</span><span class="badge">${o.source==='QR'?'QR Code':'Atendente'}</span></div><div class="muted">${esc(o.table_name)} · Comanda ${o.tab_number} · ${esc(o.created_at)}</div><ul>${o.items.map(i=>`<li><b>${num(i.qty)}×</b> ${esc(i.product_name)}${i.notes?`<div class="danger-text">${esc(i.notes)}</div>`:''}</li>`).join('')}</ul>${o.status==='NOVO'?`<button class="btn" style="width:100%" onclick="orderAdvance(${o.id},'EM PREPARAÇÃO')">Iniciar preparo</button>`:o.status==='EM PREPARAÇÃO'?`<button class="btn good" style="width:100%" onclick="orderAdvance(${o.id},'PRONTO')">Marcar pronto</button>`:`<button class="btn secondary" style="width:100%" onclick="orderAdvance(${o.id},'ENTREGUE')">Marcar entregue</button>`}</article>`).join('')||'<div class="card muted">Nenhum pedido ativo.</div>'}</div>`;
+}
+async function orderAdvance(id,status){try{await api(`/api/restaurant/orders/${id}/status`,{method:'PATCH',body:JSON.stringify({status})});page_kitchen()}catch(e){toast(e.message,'err')}}
+
+function download(url){ window.location=url; }
+
+if(location.protocol==='file:'){ const w=document.getElementById('fileWarning'); if(w) w.classList.remove('hidden'); }
+(async()=>{ try{ state.user=await api('/api/me'); await start(); }catch{ showLogin(); } })();
+</script>
+</body></html>
+
+
+
+
